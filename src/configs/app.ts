@@ -1,8 +1,21 @@
-export const APP = {
-    prefix: '!',
-    admins: ['314119119202942978','231440789350121472'],
-    owners: ['231440789350121472','185156852747599872','181087019848433665'],
-    ownerId: '231440789350121472',
-    whitelistGroups: ['201135803655520257', '839862362873659392'],
-    channelFurmeet: '376518334679613440',
+  
+import { Config } from '../types/config';
+
+export const config: Config = {
+  env: process.env.NODE_ENV,
+  token: process.env.DISCORD_TOKEN,
+  discordBotToken: process.env.DISCORDBOTS_TOKEN,
+  owner: process.env.BOT_OWNER,
+  prefix: '!',
+  db: {
+    port: process.env.DB_PORT,
+    host: process.env.DB_HOST,
+    driver: process.env.DB_DRIVER,
+    name: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+  },
+  test: {
+    length: 44,
+  },
 };

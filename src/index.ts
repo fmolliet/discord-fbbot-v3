@@ -1,9 +1,10 @@
-require('dotenv').config(); // Recommended way of loading dotenv
+import 'dotenv/config';
+import 'reflect-metadata';
 
-import { Client } from "discord.js";
-import {Bot} from "./bot";
+import { Bot    } from './bot';
+import { config } from './configs/app';
 
-new Bot( new Client(), process.env.TOKEN || '')
+new Bot( config )
     .listen().then(() => {
         console.log('Logged in!')
     }).catch((error) => {

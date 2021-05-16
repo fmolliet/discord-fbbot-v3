@@ -1,7 +1,7 @@
 {
   "name": "typescript-discord-fbbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bot de discord criado para servidor exclusivo",
   "main": "index.js",
   "scripts": {
     "start": "node out/index.js",
@@ -16,15 +16,20 @@
     "@types/node": "^15.0.3",
     "axios": "^0.21.1",
     "discord.js": "^12.5.3",
+    "discord.js-commando": "^0.12.3",
     "dotenv": "^9.0.2",
     "knex": "^0.95.5",
+    "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.0.2",
     "typescript": "^4.2.4"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
     "chai": "^4.3.4",
+    "eslint": "^7.26.0",
     "mocha": "^8.4.0",
     "nodemon": "^2.0.7",
     "ts-mockito": "^2.6.1",
