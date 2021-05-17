@@ -1,12 +1,12 @@
-import { Message } from 'discord.js';
 import { Command } from '../../types/command';
+import { CommandExecuter } from '../../types/CommandExecuter';
 
 const command : Command = {
     name: 'cat',
     aliases: ['cats', 'gato', 'gatos'],
     description: 'Manda gifs de gatos fofos',
     cooldown: 5,
-    execute( message : Message ){
+    execute( { message } : CommandExecuter){
         const cats = [
             'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
             'https://media2.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif',

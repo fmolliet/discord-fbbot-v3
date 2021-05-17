@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Message, Collection } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { Command } from '../../types/command';
+import { CommandExecuter } from '../../types/CommandExecuter';
 
 const command : Command = {
     name: 'help',
@@ -10,7 +10,7 @@ const command : Command = {
     aliases: ['commands', 'ajuda'],
     usage: '[command name]',
     cooldown: 5,
-    execute(message : Message, args?: Array<string>, commands?: Collection<string, Command> ) {
+    execute({ message , args, commands } : CommandExecuter) {
         // TODO: refatorar para deixar como na Loritta // E filtrar comandos de adm // Trocar para embed
         const data = [];
 
@@ -32,7 +32,7 @@ const command : Command = {
         }
 
         const name = args[0].toLowerCase();
-        const command = commands?.get(name) || commands?.find(c => c.aliases! && c.aliases!.includes(name));
+        const command = commands?.get(name) || commands?.find((c: { aliases: any; }) => c.aliases! && c.aliases!.includes(name));
 
         if (!command) {
             return message.reply('Esse comando não é valido!');

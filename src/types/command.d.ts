@@ -1,3 +1,5 @@
+import CommandExecuter from './CommandExecuter';
+
 export interface Command {
     name: string
     description: string
@@ -11,5 +13,5 @@ export interface Command {
     cooldown?: number
     channelId ?: string
     hasMention ?: boolean
-    execute(message: Message,  args?: Array<string>, commands?: Collection<string, this>): void
+    execute( param : CommandExecuter): void
 }

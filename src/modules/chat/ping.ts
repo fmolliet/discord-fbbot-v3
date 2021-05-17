@@ -1,5 +1,5 @@
-import { Message } from 'discord.js';
 import { Command } from '../../types/command';
+import { CommandExecuter } from '../../types/CommandExecuter';
 
 const command : Command = {
     name: 'ping',
@@ -7,7 +7,7 @@ const command : Command = {
     ownerOnly: true,
     privateOnly: true,
     cooldown: 10,
-    execute(message : Message ){
+    execute({ message } : CommandExecuter ){
         message.channel.send('Pong.');
     }
 };

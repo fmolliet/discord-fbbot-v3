@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Client, Message, Collection } from 'discord.js';
 
@@ -7,7 +8,6 @@ import { promisify } from 'util';
 import { RULES  } from './configs/rules';
 import { Config } from './types/config';
 import { Command } from './types/command';
-
 
 const globPromise = promisify(glob);
 
@@ -22,13 +22,12 @@ export class Bot {
         this.client = new Client();
         this.token = config.token;
         this.prefix = config.prefix;
-        
     }
 
     private async handleReady() : Promise<void> {
         this.client.once('ready', async() => {
             console.log(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
-            console.log(`https://discordapp.com/oauth2/authorize?${this.client.user?.id}&scope=bot&permissions=8`);
+            console.log(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
             this.client.user?.setPresence({
                 activity: {
                     type: 'LISTENING',
@@ -132,12 +131,11 @@ export class Bot {
             // fim cooldown
             
             try {
-                command.execute(message, args, this.commands );
+                command.execute({message, args, commands: this.commands, client: this.client });
             } catch (error) {
                 console.error(error);
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }
-            
         });
     }
     
