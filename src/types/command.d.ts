@@ -5,8 +5,11 @@ export interface Command {
     args?: boolean
     guildOnly?: boolean
     adminOnly?: boolean
+    ownerOnly ?: boolean
+    privateOnly ?: boolean
     usage?: string
     cooldown?: number
     channelId ?: string
+    hasMention ?: boolean
     execute(message: Message,  args?: Array<string>, commands?: Collection<string, this>): void
 }

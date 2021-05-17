@@ -16,5 +16,15 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "semi":["error", "always"],
+        "comma-dangle": 0,
+        "curly": ["error", "all"],
+        "brace-style":"warn",
+        "indent": "warn",
+        "space-before-function-paren": ["warn", "never"],
+        "quotes": [2, "single", { "avoidEscape": true }],
+        "no-use-before-define": "off",
+        "no-unused-vars": "off",
+        "no-undef": "off"
     }
 }

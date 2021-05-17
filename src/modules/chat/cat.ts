@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
+import { Message } from 'discord.js';
 import { Command } from '../../types/command';
 
 const command : Command = {
-    name: "cat",
+    name: 'cat',
     aliases: ['cats', 'gato', 'gatos'],
-    description: "Manda gifs de gatos fofos",
-	cooldown: 5,
+    description: 'Manda gifs de gatos fofos',
+    cooldown: 5,
     execute( message : Message ){
         const cats = [
             'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
@@ -16,6 +16,6 @@ const command : Command = {
         const randomNumber = Math.floor(Math.random()*cats.length);
         message.channel.send(cats[randomNumber]);
     }
-}
+};
 
 export = command;

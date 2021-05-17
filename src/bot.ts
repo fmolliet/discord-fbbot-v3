@@ -1,4 +1,5 @@
-import {Client, Message, Guild, Collection } from 'discord.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {Client, Message, Collection } from 'discord.js';
 
 import glob          from 'glob';
 import { promisify } from 'util';
@@ -25,20 +26,20 @@ export class Bot {
     }
 
     private async handleReady() : Promise<void> {
-        this.client.once('ready', async () => {
+        this.client.once('ready', async() => {
             console.log(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             console.log(`https://discordapp.com/oauth2/authorize?${this.client.user?.id}&scope=bot&permissions=8`);
             this.client.user?.setPresence({
                 activity: {
-                    type: "LISTENING",
-                    name: "Furry Brasil 2.0 [v3 - 24/7]",
+                    type: 'LISTENING',
+                    name: 'Furry Brasil 2.0 [v3 - 24/7]',
                 }
             });
             // Load Recursive files
-            const files = await globPromise(`src/modules/**/*.ts`);
+            const files = await globPromise('src/modules/**/*.ts');
             
             for (const file of files) {
-                const command = await import(file.replace('src/','./').replace('.ts','')) as Command
+                const command = await import(file.replace('src/','./').replace('.ts','')) as Command;
                 this.commands.set(command.name, command);
             }
             
@@ -46,8 +47,10 @@ export class Bot {
     }
     
     private handleGuildCreate() : void {
-        this.client.on("guildCreate", function(guild){
-            if ( RULES.whitelistGroups.includes(guild.id) ) return
+        this.client.on('guildCreate', function(guild){
+            if ( RULES.whitelistGroups.includes(guild.id) ) {
+                return;
+            }
             console.log(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
             guild.leave();
         });
@@ -55,24 +58,55 @@ export class Bot {
     
     private handleMessage() : void {
         this.client.on('message', (message: Message) => {
+            
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
-                || message.webhookID ) return;
+                || message.webhookID ) {
+                return;
+            }
             
             const args : Array<string> = message.content.slice(this.prefix.length).split(/ +/);
             
             const commandName = args.shift()?.toLowerCase() || '';    
             const command = this.getCommand(commandName);
             
-            if (!command) return;
+            if (!command) {
+                return;
+            }
             
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== 'text') {
+                message.delete({ timeout: 1000 });
                 return message.reply('Você não executar esse comando dentro do PV!');
             }
             
-            if ( command.adminOnly && !  message.guild?.member(message.author.id)?.permissions.has("ADMINISTRATOR") ) {
+            if ( command.privateOnly && message.channel.type !== 'dm' ) {
+                message.delete({ timeout: 1000 });
+                return message.author.send('Esse comando somente pode ser executado no pv!');
+            }
+            
+            if ( command.adminOnly && !  message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) {
                 return message.reply('Somente administradores podem utilizar esse comando!');
+            }
+            
+            if ( command.ownerOnly && !  RULES.owners.includes(message.author.id)  ) {
+                return message.reply('Somente donos podem utilizar esse comando!');
+            }
+            
+            if ( command.hasMention &&  message.mentions.users.size < 1 && args.length < 1 ){
+                return message.reply('Parece que você não marcou ninguem e não passou nenhum ID!');
+            }
+            
+            if ( command.hasMention && command.guildOnly ){
+                const userID = args[0].includes('<@!') ? 
+                    args[0].replace('<@!', '').replace('>', '')
+                    : args[0].includes('<@') ?
+                        args[0].replace('<@', '').replace('<', '') 
+                        : args[0];
+
+                if ( ! message.guild?.member(userID) ) {
+                    return message.reply(`Membro não encontrado no servidor com id: \`${userID}\``);
+                }
             }
             
             //COOLDOWN
@@ -85,7 +119,7 @@ export class Bot {
             const cooldownAmount = (command.cooldown || 3) * 1000;
 
             if ( timestamps && timestamps.has(message.author.id)) {
-                const expirationTime = timestamps!.get(message.author.id) + cooldownAmount;
+                const expirationTime = timestamps?.get(message.author.id) + cooldownAmount;
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
@@ -108,8 +142,10 @@ export class Bot {
     }
     
     private getCommand( commandName: string ) :  Command  {
-        const command = this.commands.get(commandName) as Command
-        if ( command ) return command;
+        const command = this.commands.get(commandName) as Command;
+        if ( command ) {
+            return command;
+        }
         // Realizei um assert non-Null  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
         return this.commands.find( cmd  =>  cmd.aliases! && cmd.aliases!.includes(commandName)) as Command;
     }
