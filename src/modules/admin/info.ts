@@ -1,12 +1,11 @@
 import { MessageEmbed } from 'discord.js';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { CommandParams,Command } from '../../interfaces';
 
 const command : Command = {
     name: 'info',
     description: 'Mostra dados do criador e informações sobre',
     aliases: ['sobre'],
-    execute({message } : CommandExecuter){
+    execute({message } : CommandParams){
         //https://anidiots.guide/first-bot/using-embeds-in-messages
         message.channel.send(new MessageEmbed({
             color: 0xbd00ff,

@@ -1,13 +1,12 @@
 import { MessageEmbed } from 'discord.js';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { CommandParams, Command } from '../../interfaces';
 
 const command : Command = {
     name: 'serverinfo',
     description: 'Retorna dados do servidor',
     guildOnly: true,
     adminOnly: true,
-    execute( {message } : CommandExecuter){
+    execute( {message } : CommandParams){
         message.channel.send(new MessageEmbed({
             title: 'Informações o servidor',
             description: 'Abaixo tem algumas informações do servidor',

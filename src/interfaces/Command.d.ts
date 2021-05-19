@@ -1,4 +1,4 @@
-import CommandExecuter from './CommandExecuter';
+import { CommandParams } from './ICommandParams';
 
 export interface Command {
     name: string
@@ -13,5 +13,5 @@ export interface Command {
     cooldown?: number
     channelId ?: string
     hasMention ?: boolean
-    execute( param : CommandExecuter): void
+    execute( param : CommandParams): void
 }

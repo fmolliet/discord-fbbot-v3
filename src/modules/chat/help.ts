@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RULES } from '../../configs/rules';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { Command, CommandParams } from '../../interfaces';
 
 const command : Command = {
     name: 'help',
@@ -10,7 +9,7 @@ const command : Command = {
     aliases: ['commands', 'ajuda'],
     usage: '[command name]',
     cooldown: 5,
-    execute({ message , args, commands } : CommandExecuter) {
+    execute({ message , args, commands } : CommandParams) {
         // TODO: refatorar para deixar como na Loritta // E filtrar comandos de adm // Trocar para embed
         const data = [];
 

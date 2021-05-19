@@ -1,14 +1,13 @@
 import { TextChannel } from 'discord.js';
 import { RULES } from '../../configs/rules';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { CommandParams, Command } from '../../interfaces';
 
 const command : Command = {
     name: 'anuncio',
     description: 'Da anuncia para os trouxas',
     guildOnly: true,
     adminOnly: true,
-    execute({ message, client } : CommandExecuter){
+    execute({ message, client } : CommandParams){
         
         const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : RULES.announceChannel;
         const channel = client?.channels.cache.get(channelId);

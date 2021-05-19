@@ -1,13 +1,12 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { Command, CommandParams } from '../../interfaces';
 import getRandomEmoji from '../../utils/getRandomEmoji';
 
 const command : Command = {
     name: 'avatar',
     description: 'Retorna o link do avatar da pessoa marcada.',
     aliases: ['icon', 'pfp'],
-    execute({ message } : CommandExecuter){
+    execute({ message } : CommandParams){
         if (!message.mentions.users.size) {
             const url = message.author.avatarURL({ format: 'png', size: 2048});
           

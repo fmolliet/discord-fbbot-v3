@@ -1,7 +1,7 @@
 import { Client, Collection, Message} from 'discord.js';
-import Command from './command';
+import Command from './Command';
 
-export interface CommandExecuter {
+export interface CommandParams {
     message: Message,
     args?: Array<string>,
     commands?: Collection<string, Command>,

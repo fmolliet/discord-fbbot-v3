@@ -5,26 +5,34 @@ import {Client, Message, Collection } from 'discord.js';
 import glob          from 'glob';
 import { promisify } from 'util';
 
-import { RULES  } from './configs/rules';
-import { Config } from './types/config';
-import { Command } from './types/command';
+import { RULES  }  from './configs/rules';
+import { Command, AppConfig, DatabaseConfig } from './interfaces';
+import   database    from './database/connect';
+
 
 const globPromise = promisify(glob);
 
 export class Bot {
+    
     private client: Client;
     private readonly token: string | undefined;
     private prefix : string;
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
+    private databaseConfig: DatabaseConfig;
+    
 
-    constructor( config : Config) {
+    constructor( config : AppConfig ) {
+
         this.client = new Client();
         this.token = config.token;
         this.prefix = config.prefix;
+        this.databaseConfig = config.db;
+        
     }
 
     private async handleReady() : Promise<void> {
+        
         this.client.once('ready', async() => {
             console.log(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             console.log(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
@@ -42,10 +50,13 @@ export class Bot {
                 this.commands.set(command.name, command);
             }
             
+            database.connect( this.databaseConfig );
+            
         });
     }
     
     private handleGuildCreate() : void {
+        
         this.client.on('guildCreate', function(guild){
             if ( RULES.whitelistGroups.includes(guild.id) ) {
                 return;

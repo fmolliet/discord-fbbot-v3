@@ -1,5 +1,4 @@
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { Command, CommandParams } from '../../interfaces';
 
 const command : Command = {
     name: 'warn',
@@ -7,7 +6,7 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     hasMention: true,
-    execute({message } : CommandExecuter){
+    execute({message } : CommandParams){
         message.channel.send('Warn');
         // TODO: desenvolver funcionalide de warn
         

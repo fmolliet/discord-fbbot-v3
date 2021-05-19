@@ -1,12 +1,11 @@
 import { RULES } from '../../configs/rules';
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { Command, CommandParams } from '../../interfaces';
 
 const command : Command = {
     name: 'hello',
     aliases: ['olar', 'ola', 'hellor', 'hellow', 'oi'],
     description: 'Manda uns olar pra quem mandar o comando',
-    execute({ message } : CommandExecuter){
+    execute({ message } : CommandParams){
         if(message.author.id === RULES.owner ) {
             message.channel.send(':wave: Oi pai! >w<');
         } else {

@@ -1,5 +1,4 @@
-import { Command } from '../../types/command';
-import { CommandExecuter } from '../../types/CommandExecuter';
+import { Command, CommandParams } from '../../interfaces';
 
 const command : Command = {
     name: 'ping',
@@ -7,7 +6,7 @@ const command : Command = {
     ownerOnly: true,
     privateOnly: true,
     cooldown: 10,
-    execute({ message } : CommandExecuter ){
+    execute({ message } : CommandParams ){
         message.channel.send('Pong.');
     }
 };
