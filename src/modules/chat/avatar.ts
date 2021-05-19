@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { Command, CommandParams } from '../../interfaces';
 import getRandomEmoji from '../../utils/getRandomEmoji';
 

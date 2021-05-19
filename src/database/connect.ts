@@ -7,7 +7,7 @@ import { DatabaseConfig } from '../interfaces';
 class Connect {
     public connect({ host, port = '27017', user, password, collection = 'discordbot'}: DatabaseConfig ): void {
         connect(
-            `mongodb+srv://${host}:${port}`,
+            `mongodb+srv://${host}`,
             {
                 user: user,
                 pass: password,

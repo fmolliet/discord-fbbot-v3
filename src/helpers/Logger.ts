@@ -1,6 +1,4 @@
 import winston from 'winston';
-import { SPLAT } from 'triple-beam';
-const { printf, combine, label } = winston.format;
 
 const levels = {
     error: 0,

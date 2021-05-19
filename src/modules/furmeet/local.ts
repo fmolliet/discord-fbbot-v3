@@ -1,5 +1,5 @@
-import { Command, CommandParams, Furmeet } from '../../interfaces';
-import UserRepository from '../../repositories/UserRepository';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Command, CommandParams } from '../../interfaces';
 import validateState from '../../utils/validateState';
 
 const command : Command = {
@@ -11,19 +11,29 @@ const command : Command = {
     cooldown: 5,
     hasArgs: true,
     async execute( { message, args, userRepository } : CommandParams){
-        // TODO Implement
+        const state = args![0].toUpperCase();
+        
+        if( validateState(state) ){
 
-
-        if( args && args[0] && validateState(args[0]) ){
-                
+            const furro = await userRepository?.getUserById(message.author.id);
+            //message.channel.send(furro!.toString());
+            
+            if ( furro &&  furro.state === state ){
+                return message.reply('você já está cadastrado nesse estado!');
+            } else if( furro ) {
+                await userRepository?.updateUserState(furro._id!, state);
+                return message.reply('eu acabei de atualizar seu estado!');
+            }
+            
+            
             await userRepository?.createUser({
                 userId: message.author.id,
-                state: args[0]
+                state: state
             });
             return message.reply('cadastrei aqui seu estado! ... ');
                 
         }
-        return message.reply(`Estado Inválido: \`' + ${args?.[0]} + '\` tente outro!'`);
+        return message.reply(`Estado Inválido: \`' + ${args![0]} + '\` tente outro!'`);
 
            
         

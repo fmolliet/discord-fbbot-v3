@@ -88,10 +88,6 @@ export class Bot {
                 return;
             }
             
-            if ( command.hasArgs && ( args.length === 0) ){
-                return message.reply(`está faltando informar algo parça! dá uma olhada usando o comando: \`${this.prefix}help ${command.name}\``);
-            }
-            
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== 'text') {
                 message.delete({ timeout: 1000 });
@@ -103,6 +99,7 @@ export class Bot {
                 return message.author.send('Esse comando somente pode ser executado no pv!');
             }
             
+            // TODO: Adicionar flags para moderadores
             if ( command.adminOnly && !  message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) {
                 return message.reply('Somente administradores podem utilizar esse comando!');
             }
@@ -113,6 +110,10 @@ export class Bot {
             
             if ( command.hasMention &&  message.mentions.users.size < 1 && args.length < 1 ){
                 return message.reply('Parece que você não marcou ninguem e não passou nenhum ID!');
+            }
+                
+            if ( command.hasArgs && ( args.length === 0) ){
+                return message.reply(`está faltando informar algo parça! dá uma olhada usando o comando: \`${this.prefix}help ${command.name}\``);
             }
             
             if ( command.hasMention && command.guildOnly ){
@@ -126,6 +127,8 @@ export class Bot {
                     return message.reply(`Membro não encontrado no servidor com id: \`${userID}\``);
                 }
             }
+            
+            // TODO implementar filtro de ChannelID para executar comando somente em um certo canal.
             
             //COOLDOWN
             if (!this.cooldowns.has(command.name)) {
