@@ -1,4 +1,6 @@
 import winston from 'winston';
+import { SPLAT } from 'triple-beam';
+const { printf, combine, label } = winston.format;
 
 const levels = {
     error: 0,
@@ -34,11 +36,11 @@ const format: winston.Logform.Format = winston.format.combine(
 
 const transports = [
     new winston.transports.Console(),
-    new winston.transports.File({
-        filename: 'logs/error.log',
-        level: 'error',
-    }),
-    new winston.transports.File({ filename: 'logs/all.log' }),
+    // new winston.transports.File({
+    //     filename: 'logs/error.log',
+    //     level: 'error',
+    // }),
+    // new winston.transports.File({ filename: 'logs/all.log' }),
 ];
 
 const Logger: winston.Logger = winston.createLogger({

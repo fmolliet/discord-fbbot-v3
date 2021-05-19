@@ -4,7 +4,7 @@ export interface Command {
     name: string
     description: string
     aliases?: Array<string> 
-    args?: boolean
+    hasArgs?: boolean
     guildOnly?: boolean
     adminOnly?: boolean
     ownerOnly ?: boolean

@@ -31,7 +31,7 @@ const command : Command = {
         }
 
         const name = args[0].toLowerCase();
-        const command = commands?.get(name) || commands?.find((c: { aliases: any; }) => c.aliases! && c.aliases!.includes(name));
+        const command : Command = commands?.get(name) || commands?.find((c: { aliases: any; }) => c.aliases! && c.aliases!.includes(name));
 
         if (!command) {
             return message.reply('Esse comando não é valido!');
@@ -48,7 +48,7 @@ const command : Command = {
         }
         
         if (command.usage) {
-            data.push(`**Uso:** ${RULES.prefix}${command.name} ${command.usage}`);
+            data.push(`**Exemplo de uso:** ${RULES.prefix}${command.name} ${command.usage}`);
         }
 
         data.push(`**Cooldown:** ${command.cooldown || 3} segundo(s)`);

@@ -8,6 +8,9 @@ import { promisify } from 'util';
 import { RULES  }  from './configs/rules';
 import { Command, AppConfig, DatabaseConfig } from './interfaces';
 import   database    from './database/connect';
+import UserRepository from './repositories/UserRepository';
+
+import { Logger } from './helpers';
 
 
 const globPromise = promisify(glob);
@@ -19,8 +22,9 @@ export class Bot {
     private prefix : string;
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
-    private databaseConfig: DatabaseConfig;
     
+    private databaseConfig: DatabaseConfig;
+    private userRepository = new UserRepository();
 
     constructor( config : AppConfig ) {
 
@@ -61,7 +65,7 @@ export class Bot {
             if ( RULES.whitelistGroups.includes(guild.id) ) {
                 return;
             }
-            console.log(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
+            Logger.info(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
             guild.leave();
         });
     }
@@ -82,6 +86,10 @@ export class Bot {
             
             if (!command) {
                 return;
+            }
+            
+            if ( command.hasArgs && ( args.length === 0) ){
+                return message.reply(`está faltando informar algo parça! dá uma olhada usando o comando: \`${this.prefix}help ${command.name}\``);
             }
             
             // verifica se são comandos de servidor somente
@@ -142,9 +150,9 @@ export class Bot {
             // fim cooldown
             
             try {
-                command.execute({message, args, commands: this.commands, client: this.client });
+                command.execute({message, args, commands: this.commands, client: this.client, userRepository: this.userRepository });
             } catch (error) {
-                console.error(error);
+                Logger.error(error);
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }
         });
