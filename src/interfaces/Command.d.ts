@@ -1,4 +1,4 @@
-import { CommandParams } from './ICommandParams';
+import { CommandParams } from './CommandParams';
 
 export interface Command {
     name: string

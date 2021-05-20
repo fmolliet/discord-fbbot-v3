@@ -8,7 +8,7 @@ import { promisify } from 'util';
 import { RULES  }  from './configs/rules';
 import { Command, AppConfig, DatabaseConfig } from './interfaces';
 import   database    from './database/connect';
-import UserRepository from './repositories/UserRepository';
+import FurmeetRepository from './repositories/FurmeetRepository';
 
 import { Logger } from './helpers';
 
@@ -24,7 +24,7 @@ export class Bot {
     private cooldowns = new Collection();
     
     private databaseConfig: DatabaseConfig;
-    private userRepository = new UserRepository();
+    private furmeetRepository = new FurmeetRepository();
 
     constructor( config : AppConfig ) {
 
@@ -38,8 +38,10 @@ export class Bot {
     private async handleReady() : Promise<void> {
         
         this.client.once('ready', async() => {
-            console.log(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
-            console.log(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
+            // Mostrando nome e url para adicionar
+            Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
+            Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
+            // Alterando a presence
             this.client.user?.setPresence({
                 activity: {
                     type: 'LISTENING',
@@ -53,7 +55,7 @@ export class Bot {
                 const command = await import(file.replace('src/','./').replace('.ts','')) as Command;
                 this.commands.set(command.name, command);
             }
-            
+            Logger.info('Funcionalidades carregadas.');
             database.connect( this.databaseConfig );
             
         });
@@ -153,7 +155,7 @@ export class Bot {
             // fim cooldown
             
             try {
-                command.execute({message, args, commands: this.commands, client: this.client, userRepository: this.userRepository });
+                command.execute({message, args, commands: this.commands, client: this.client, furmeetRepository: this.furmeetRepository });
             } catch (error) {
                 Logger.error(error);
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');

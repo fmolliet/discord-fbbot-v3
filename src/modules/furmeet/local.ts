@@ -10,33 +10,31 @@ const command : Command = {
     channelId: '376518334679613440',
     cooldown: 5,
     hasArgs: true,
-    async execute( { message, args, userRepository } : CommandParams){
+    async execute( { message, args, furmeetRepository } : CommandParams){
         const state = args![0].toUpperCase();
         
         if( validateState(state) ){
 
-            const furro = await userRepository?.getUserById(message.author.id);
+            const furro = await furmeetRepository?.getUserById(message.author.id);
             //message.channel.send(furro!.toString());
             
             if ( furro &&  furro.state === state ){
                 return message.reply('você já está cadastrado nesse estado!');
             } else if( furro ) {
-                await userRepository?.updateUserState(furro._id!, state);
+                await furmeetRepository?.updateUserState(furro._id!, state);
                 return message.reply('eu acabei de atualizar seu estado!');
             }
             
-            
-            await userRepository?.createUser({
+            await furmeetRepository?.createUser({
                 userId: message.author.id,
                 state: state
             });
+            
             return message.reply('cadastrei aqui seu estado! ... ');
                 
         }
         return message.reply(`Estado Inválido: \`' + ${args![0]} + '\` tente outro!'`);
 
-           
-        
     }
 };
 

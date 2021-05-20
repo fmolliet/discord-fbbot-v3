@@ -1,10 +1,10 @@
-import { Mongoose, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Snowflake } from 'discord.js';
 
-import FurmeetModel from '../models/UserFurmeet';
+import FurmeetModel from '../models/Furmeets';
 import { Furmeet } from '../interfaces';
 
-export default class UserRepository {
+export default class FurmeetRepository {
     
     public async getUserById( userId: Snowflake ): Promise<Furmeet|null> {
         return await FurmeetModel.findOne({

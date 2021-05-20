@@ -1,5 +1,5 @@
 import { Client, Collection, Message} from 'discord.js';
-import UserRepository from '../repositories/UserRepository';
+import FurmeetRepository from '../repositories/FurmeetRepository';
 import Command from './Command';
 
 export interface CommandParams {
@@ -7,5 +7,5 @@ export interface CommandParams {
     args?: Array<string>,
     commands?: Collection<string, Command>,
     client ?: Client,
-    userRepository ?: UserRepository
+    furmeetRepository ?: FurmeetRepository
 }

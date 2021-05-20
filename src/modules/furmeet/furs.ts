@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Command, CommandParams, Furmeet } from '../../interfaces';
-import FurmeetModel from '../../models/UserFurmeet';
+import { Command, CommandParams } from '../../interfaces';
 import validateState from '../../utils/validateState';
 
 const command : Command = {
@@ -12,14 +11,14 @@ const command : Command = {
     channelId: '376518334679613440',
     cooldown: 5,
     hasArgs: true,
-    async execute( { message, args, userRepository } : CommandParams){
+    async execute( { message, args, furmeetRepository } : CommandParams){
         
         const founded : string[]= [];
         const state = args![0].toUpperCase();
         
         if( validateState(state) ){
                 
-            const furs = await userRepository?.getUsersByState(state);
+            const furs = await furmeetRepository?.getUsersByState(state);
             
             if ( furs?.length !== 0  ){
                 // TODO: apresentar melhor mensagem ou com variação conforme a quantidade

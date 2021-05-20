@@ -19,7 +19,7 @@ class Connect {
                 if (err) {
                     throw new DatabaseError(err);
                 } else {
-                    Logger.info('Database is connected');
+                    Logger.info('Base de dados GC está conectado.');
                 }
             }
         );

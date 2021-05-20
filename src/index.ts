@@ -9,7 +9,7 @@ console.clear();
 
 new Bot( config )
     .listen().then(() => {
-        Logger.info('Bot iniciado e logado!');
+        Logger.info('Bot iniciando...');
     }).catch((error) => {
-        Logger.info('Oh no! ', error);
+        Logger.error('Oh no! ', error);
     });

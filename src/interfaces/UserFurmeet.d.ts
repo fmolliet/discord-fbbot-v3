@@ -8,4 +8,4 @@ export interface Furmeet {
     city ?: string
 }
 
-export interface UserDocument extends Furmeet, Document {}
+export interface FurmeetDocument extends Furmeet, Document {}

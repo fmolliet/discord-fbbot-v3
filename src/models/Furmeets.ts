@@ -1,9 +1,9 @@
   
 import { model, Model, Schema } from 'mongoose';
 
-import { UserDocument } from '../interfaces';
+import { FurmeetDocument } from '../interfaces';
 
-const UserFurmeet: Schema = new Schema({
+const FurmeetSchema : Schema = new Schema({
     userId: {
         type: String,
         required: true,
@@ -22,6 +22,6 @@ const UserFurmeet: Schema = new Schema({
     id: false,
 });
 
-const FurmeetModel: Model<UserDocument> = model('UserFurmeet', UserFurmeet);
+const FurmeetModel: Model<FurmeetDocument> = model('FurmeetDocument', FurmeetSchema);
 
 export default FurmeetModel;
