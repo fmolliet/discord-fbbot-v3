@@ -1,13 +1,14 @@
 {
   "name": "typescript-discord-fbbot",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Bot de discord criado para servidor exclusivo",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=.production node dist/index.js",
     "watch": "tsc -p tsconfig.json -w --downlevelIteration",
     "test": "cross-env NODE_ENV=.test mocha -r ts-node/register \"tests/**/*.spec.ts\"",
-    "local": "cross-env NODE_ENV=.local nodemon dist/index.js -e js"
+    "local": "cross-env NODE_ENV=.local nodemon dist/index.js -e js",
+    "build": "tsc -p tsconfig.json --downlevelIteration"
   },
   "keywords": [],
   "author": "",

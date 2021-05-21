@@ -1,12 +1,8 @@
-FROM node:12.9-alpine
+FROM node:12.7.0-alpine
 
-WORKDIR /usr/app
-
-COPY package*.json ./
-
-RUN apk update && apk upgrade && \
-    apk add --no-cache git
-
-RUN npm install --quiet
-
+WORKDIR /app
 COPY . .
+RUN ["npm", "install"]
+RUN ["npm", "run", "build"]
+
+ENTRYPOINT ["npm", "run", "local"]
