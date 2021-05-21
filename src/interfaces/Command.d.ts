@@ -13,5 +13,6 @@ export interface Command {
     cooldown?: number
     channelId ?: string
     hasMention ?: boolean
+    hasAttachment ?: boolean
     execute( param : CommandParams): void
 }

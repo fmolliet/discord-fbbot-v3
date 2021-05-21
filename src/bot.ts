@@ -126,8 +126,12 @@ export class Bot {
                         : args[0];
 
                 if ( ! message.guild?.member(userID) ) {
-                    return message.reply(`Membro não encontrado no servidor com id: \`${userID}\``);
+                    return message.reply(`membro não encontrado no servidor com id: \`${userID}\``);
                 }
+            }
+            
+            if ( command.hasAttachment && !message.attachments.first() ){
+                return message.reply('não tem nenhum anexo nessa mensagem');
             }
             
             // TODO implementar filtro de ChannelID para executar comando somente em um certo canal.
