@@ -26,6 +26,10 @@ const command : Command = {
                 title: `Warns do ${member?.displayName}`,
                 description: 'Abaixo estão os warns recebidos pelo usuário.',
                 color: message.guild?.member(message.author.id)?.displayHexColor as string,
+                timestamp: new Date(),
+                footer: {
+                    text: 'Furry Brasil 2.0'
+                }  
             });
             
             const warns = await warnRepository?.getWarnsByUserId(member?.id);
