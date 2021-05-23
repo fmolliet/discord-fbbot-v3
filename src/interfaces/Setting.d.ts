@@ -1,9 +1,10 @@
 import { Types } from 'mongoose';
 
 export interface Setting {
-    _id ?: Types._ObjectId,
-    name : string,
-    value : string,
+    _id ?: Types._ObjectId
+    guildId: string
+    name : string
+    value : string
     type ?: string
 }
 

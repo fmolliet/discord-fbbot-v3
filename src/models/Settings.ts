@@ -4,6 +4,10 @@ import { model, Model, Schema } from 'mongoose';
 import { SettingDocument } from '../interfaces';
 
 const SettingsSchema : Schema = new Schema({
+    guildId : {
+        type: String,
+        required: true,
+    },
     name : {
         type: String,
         required: true,

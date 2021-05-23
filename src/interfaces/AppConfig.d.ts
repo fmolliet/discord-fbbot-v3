@@ -1,3 +1,4 @@
+import { ClientOpts } from 'redis';
 import { DatabaseConfig } from './DatabaseConfig';
 
 export interface AppConfig {
@@ -10,4 +11,5 @@ export interface AppConfig {
     test: {
       length: number;
     },
+    redis?: string
 }

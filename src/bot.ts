@@ -1,16 +1,22 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Client, Message, Collection } from 'discord.js';
-
+import { Command, AppConfig, DatabaseConfig } from './interfaces';
 import glob          from 'glob';
 import { promisify } from 'util';
 
-import { RULES  }  from './configs/rules';
-import { Command, AppConfig, DatabaseConfig } from './interfaces';
-import   database    from './database/connect';
+import { RULES }   from './configs/rules';
+import database    from './database/connect';
+
 import FurmeetRepository from './repositories/FurmeetRepository';
+import TaskRepository    from './repositories/TaskRepository';
+import WarnRepository    from './repositories/WarnRepository';
 
 import { Logger } from './helpers';
+import { RemoveMuteTask } from './tasks/RemoveMuteTask';
+//import { ClientOpts, RedisClient } from 'redis';
+//import {  } from './tasks';
 
 
 const globPromise = promisify(glob);
@@ -20,11 +26,16 @@ export class Bot {
     private client: Client;
     private readonly token: string | undefined;
     private prefix : string;
+    
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
     
     private databaseConfig: DatabaseConfig;
+    
     private furmeetRepository = new FurmeetRepository();
+    private taskRepository    = new TaskRepository();
+    private warnRepository    = new WarnRepository();
+    
 
     constructor( config : AppConfig ) {
 
@@ -32,7 +43,17 @@ export class Bot {
         this.token = config.token;
         this.prefix = config.prefix;
         this.databaseConfig = config.db;
-        
+       
+    }
+    
+    private setPrefix( prefix: string) : void{
+        this.prefix = prefix;
+    }
+    
+    private async setup(){
+        // busco no banco as config
+        // Busco no banco As tarefas -> memoria 
+        await RemoveMuteTask( this.client, this.taskRepository );
     }
 
     private async handleReady() : Promise<void> {
@@ -51,13 +72,14 @@ export class Bot {
             // Load Recursive files
             const files = await globPromise('src/modules/**/*.ts');
             
-            for (const file of files) {
+            for await (const file of files) {
                 const command = await import(file.replace('src/','./').replace('.ts','')) as Command;
                 this.commands.set(command.name, command);
             }
             Logger.info('Funcionalidades carregadas.');
-            database.connect( this.databaseConfig );
             
+            await database.connect( this.databaseConfig ); 
+            await this.setup();
         });
     }
     
@@ -159,7 +181,15 @@ export class Bot {
             // fim cooldown
             
             try {
-                command.execute({message, args, commands: this.commands, client: this.client, furmeetRepository: this.furmeetRepository });
+                command.execute({ message,
+                    args,
+                    commands: this.commands,
+                    client: this.client,
+                    setPrefix: this.setPrefix,
+                    furmeetRepository: this.furmeetRepository,
+                    taskRepository: this.taskRepository,
+                    warnRepository: this.warnRepository
+                });
             } catch (error) {
                 Logger.error(error);
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');

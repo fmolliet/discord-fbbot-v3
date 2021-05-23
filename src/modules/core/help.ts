@@ -1,7 +1,11 @@
+/* eslint-disable no-dupe-else-if */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { cpuUsage, title } from 'process';
 import { RULES } from '../../configs/rules';
 import { Command, CommandParams } from '../../interfaces';
+import { MessageEmbed } from 'discord.js';
+import { publicEncrypt } from 'crypto';
 
 const command : Command = {
     name: 'help',
@@ -12,10 +16,22 @@ const command : Command = {
     execute({ message , args, commands } : CommandParams) {
         // TODO: refatorar para deixar como na Loritta // E filtrar comandos de adm // Trocar para embed
         const data = [];
+        // Adicionado filtro para onwers e admins
+        const isAdmin = ( message.channel.type !== 'dm' && message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) || RULES.owners.includes(message.author.id);
+        const allComands = commands?.map(( command : Command ) => {
+            if ( command.adminOnly && isAdmin ) {
+                return command.name;
+            } else if  ( command.adminOnly && ! isAdmin ) {
+                return null;
+            } 
+            return command.name;
+             
+        });
 
+        // Buscar de maneira dinamica o prefixo ou ser sempre ! para pv
         if (!args?.length) {
             data.push('Aqui a lista de todos os meus comandos:');
-            data.push(commands?.map(( command : Command ) => command.name).join(', '));
+            data.push(allComands?.filter(( command )=> command).join(', '));
             data.push(`\nVocê pode mandar \`${RULES.prefix}help [command name]\` para saber mais sobre algum comando!`);
             return message.author.send(data, { split: true })
                 .then(() => {

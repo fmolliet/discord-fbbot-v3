@@ -1,5 +1,5 @@
 import { Snowflake } from 'discord.js';
-import { Types } from 'mongoose';
+import { Types , Document }  from 'mongoose';
 
 export interface Furmeet {
     _id ?: Types._ObjectId,

@@ -1,5 +1,4 @@
   
 export enum EVENT {
-    ORM_READY = 'orm_ready',
-    QUESTION_SENT = 'question_sent',
-  }
+    REMOVE_MUTE = 'warn_mute_remove'
+}
