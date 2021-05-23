@@ -21,7 +21,7 @@ const command : Command = {
             return message.channel.send('Nenhuma informação foi dada sobre o meet :/');
         }
         
-        Logger.info(args);
+        //Logger.info(args);
 
         if( validateState(state) ){
                 
