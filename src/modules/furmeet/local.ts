@@ -5,7 +5,7 @@ import validateState from '../../utils/validateState';
 const command : Command = {
     name: 'local',
     description: 'Cadastra ou atualiza seu local de Meetings!',
-    usage: '<UF>',
+    usage: '[UF]',
     guildOnly: true,
     channelId: '376518334679613440',
     cooldown: 5,

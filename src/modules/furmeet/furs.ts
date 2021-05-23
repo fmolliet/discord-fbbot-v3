@@ -6,7 +6,7 @@ const command : Command = {
     name: 'fur',
     aliases: ['furs', 'furros'],
     description: 'Lista todos furries de um estado!',
-    usage: '<UF>',
+    usage: '[UF]',
     guildOnly: true,
     channelId: '376518334679613440',
     cooldown: 5,

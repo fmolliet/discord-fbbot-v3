@@ -4,7 +4,8 @@ import { CommandParams, Command } from '../../interfaces';
 
 const command : Command = {
     name: 'anuncio',
-    description: 'Da anuncia para os trouxas',
+    description: 'Da anúncio para os membros em um canal específico',
+    usage: '[Anuncio]',
     guildOnly: true,
     adminOnly: true,
     execute({ message, client } : CommandParams){

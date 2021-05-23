@@ -6,7 +6,7 @@ import validateState from '../../utils/validateState';
 const command : Command = {
     name: 'meeting',
     description: 'Faz um meeting e marca todos da UF!',
-    usage: '<UF> <STAFF> <INFO>',
+    usage: '[UF] [Staff ou mention ou contato ] [Informações sobre o evento]',
     hasArgs: true,
     async execute( { message, args, furmeetRepository } : CommandParams){
         

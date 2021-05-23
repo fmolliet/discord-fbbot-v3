@@ -5,6 +5,7 @@ import getRandomEmoji from '../../utils/getRandomEmoji';
 const command : Command = {
     name: 'avatar',
     description: 'Retorna o link do avatar da pessoa marcada.',
+    usage: '[Vazio ou Mention ou ID]',
     aliases: ['icon', 'pfp'],
     execute({ message } : CommandParams){
         if (!message.mentions.users.size) {

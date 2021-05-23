@@ -6,6 +6,7 @@ import { Command,CommandParams } from '../../interfaces';
 const command : Command = {
     name: 'setprefix',
     description: 'Troca o prefixo dos comandos',
+    usage: '[prefixo]',
     guildOnly: true,
     adminOnly: true,
     hasArgs : true,

@@ -3,7 +3,7 @@ import { CommandParams, Command } from '../../interfaces';
 
 const command : Command = {
     name: 'serverinfo',
-    description: 'Retorna dados do servidor',
+    description: 'Retorna dados do servidor.',
     guildOnly: true,
     adminOnly: true,
     execute( {message } : CommandParams){

@@ -7,6 +7,7 @@ import { Command, CommandParams } from '../../interfaces';
 const command : Command = {
     name: 'warn',
     description: 'Da warn nos membros',
+    usage: '[Mention ou Id] [Motivo]',
     guildOnly: true,
     adminOnly: true,
     hasMention: true,
@@ -29,16 +30,16 @@ const command : Command = {
         if ( message.guild?.member(userId) ){
             
             const member = message.guild?.member(userId);
-            // Adiciona o warn
-            console.log(args?.shift());
+            
+            // Remove o mention
+            args?.shift();
             if( args?.length === 0 ) {
                 return message.reply('você precisa dar um motivo!');
             }
             
             const description = args?.join(' ') || '';
-            
+            // Adiciona o warn
             await warnRepository?.createWarn({description: description, userId: member?.id, guildId: message.guild.id, createdAt: new Date(Date.now()) });
-            
             // Conta quantos warns a pessoa ja tomou para atribuir puniÇão
             const warns = await warnRepository?.getWarnsByUserId(member?.id);
             let punicao = '';
@@ -48,52 +49,52 @@ const command : Command = {
                 const role = message.guild.roles.cache.get(muteRoleId);
                 
                 if ( !role ) {
-                    return message.reply('Não tem tag de `Mutado` no servidor');
+                    return message.reply(`Não tem tag de \`Mutado\` com ID: \`${muteRoleId}\` no servidor ou estou sem permissão.`);
                 }
+                
                 // Mute tag
-                try {
-                    member?.roles.add(role);
-                } catch ( err ){
-                    message.channel.send('Não consegui adicionar a rolede mute desse cara!');
-                }
+                member?.roles.add(role).then(()=> message.reply('warn aplicado, o membro foi punido com mute!'))
+                    .catch((error)=>{
+                        Logger.error(error.message);
+                        message.channel.send('Não consegui adicionar a rolede mute desse cara!');
+                    });  
+                            
                 const task = await taskRepository?.createTask({ guildId: message.guild.id, userId: member?.id, executeOn: removeAt});
                 
                 setTimeout( async()=> {
-                    try {
-                        member?.roles.remove(role);
-                    } catch ( err ){
-                        message.channel.send('Não consegui remover a rolede mute desse cara!');
-                    }
-                    
-                    await taskRepository?.deleteTask(task!);
+                    member?.roles.remove(role)
+                        .then(async()=>  await taskRepository?.deleteTask(task!))
+                        .catch((error)=>{
+                            Logger.error(error.message);
+                            message.channel.send('Não consegui remover a role de mute desse cara!');
+                        });  
                 },muteTime);
                 
                 punicao = 'Mute';
                 // Feedback do comando para staff
-                message.reply('warn aplicado, o membro foi punido com mute!');
+                
             } else if ( warns!.length === 3 ){
                 // Kicka e retorna mensagem para dm
                 punicao = 'Kick';
-                try{
-                    member?.kick('Kickado por ter tomado warning demais');
-                    // Feedback do comando para staff
-                    message.reply('warn aplicado, o membro foi punido com Kick!');
-                } catch ( err ){
-                    Logger.error(err.message);
-                    message.reply('ouve um erro na execução do kick, provavelmente estou sem permissão!');
-                }
-           
+                
+                member?.kick('Kickado por ter tomado warning demais')
+                    .then(()=> message.reply('warn aplicado, o membro foi punido com Kick!'))
+                    .catch((error)=>{
+                        Logger.error(error.message);
+                        message.reply('ouve um erro na execução do kick, provavelmente estou sem permissão!');
+                    });  
+
             } else {
                 // Bane o membro e manda mensagem no PV  
                 punicao = 'Ban';
-                try{
-                    member?.ban({reason: 'Tomou 4 warnings ¯\\_(ツ)_/¯'});   
-                    message.reply('warn aplicado, o membro foi punido com Ban!');
-                } catch ( err ){
-                    Logger.error(err.message);
-                    message.reply('ouve um erro na execução do ban, provavelmente estou sem permissão!');
-                }
-               
+                
+                member?.ban({reason: 'Tomou 4 warnings ¯\\_(ツ)_/¯'})
+                    .then(()=> message.reply('warn aplicado, o membro foi punido com Ban!'))
+                    .catch((error)=>{
+                        Logger.error(error.message);
+                        message.reply('ouve um erro na execução do ban, provavelmente estou sem permissão!');
+                    });   
+                
             }
             
             // Manda mensagem no pv
