@@ -123,8 +123,7 @@ export class Bot {
                 return message.author.send('Esse comando somente pode ser executado no pv!');
             }
             
-            // TODO: Adicionar flags para moderadores
-            if ( command.adminOnly && !  message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) {
+            if ( command.adminOnly &&  !message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') && !message.guild?.member(message.author.id)?.hasPermission('KICK_MEMBERS') ) {
                 return message.reply('Somente administradores podem utilizar esse comando!');
             }
             

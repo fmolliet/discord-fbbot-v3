@@ -7,7 +7,7 @@ import { Command, CommandParams } from '../../interfaces';
 const command : Command = {
     name: 'buscawarn',
     aliases: ['traswarns', 'buscawarns', 'getwarns'],
-    description: 'Da warn nos membros',
+    description: 'Busca os warns que os membros receberam',
     usage: '[Mention ou Id]',
     guildOnly: true,
     adminOnly: true,
