@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { MessageEmbed } from "discord.js";
 import { Logger } from "../../helpers";
-import bancocentral from "../../apis/bancocentral";
-import cotacao from '../../apis/cotacao';
+import bancocentral from "../../services/bancocentral";
+import cotacao from '../../services/cotacao';
 import { Command,CommandParams } from '../../interfaces';
+import bcbsite from "../../services/bancocentralgov";
 
 const command : Command = {
     name: 'cotacao',
@@ -30,24 +31,32 @@ const command : Command = {
 
         
         try { 
-            const result = await bancocentral.get(`/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${day}'&$top=1&$format=json&$select=cotacaoVenda`);
-
-            const json = JSON.parse(JSON.stringify(result.data))
-            const reais : number = json.value[0]['cotacaoVenda']
+            //const result = await bancocentral.get(`/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${day}'&$top=1&$format=json&$select=cotacaoVenda`);
+            //const json = JSON.parse(JSON.stringify(result.data))
+            //const reais : number = json.value[0]['cotacaoVenda'] * 1.04
             
             //const result = await cotacao.get('/USD-BRL,EUR-BRL,BTC-BRL');
             //const reais : number = result.data.USDBRL.high
             
+            
+            const result = await bcbsite.get('/indicadorCambio');
+            
+            const prices = result.data.conteudo[0] || result.data.conteudo[1]
+            
+            // 4 % de Spread
+            const reais : number = prices.valorVenda * 1.04
+            
+
             // conversão direta
             const exchange = (dolares * reais)
             
-            // Taxa padrão de Spread aplicada pelo Nubank e pelo Banco Neon
-            const spread = (exchange * 0.04)
             // Taxa do IOF 
-            const iof = ((exchange + spread) * 0.0638)
+            const iof = ( (exchange ) * 0.0638)
             // Valor Total com IOF e Spread
-            const total = exchange + spread + iof
+            const total = exchange  + iof
             const total_rounded = total.toFixed(3)
+            
+            
             
             return message.channel.send(new MessageEmbed({
                 title: ':moneybag: Cotaçao banco central do dollar comercial :moneybag:',
