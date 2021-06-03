@@ -43,7 +43,7 @@ const command : Command = {
         
         const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` )
         
-        const image = await mergeImage(file, `./resources/pride/${pride}.png`);
+        const image = await mergeImage(file, `./resources/pride/${pride}.png`, message.author.id);
         
         const attachment = new MessageAttachment(image, `${message.author.id}.png`);
         
