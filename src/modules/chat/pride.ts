@@ -7,7 +7,7 @@ import mergeImage from '../../utils/mergeImage';
 const command : Command = {
     name: 'pride',
     description: 'Cria avatar com a bandeira.',
-    usage: '[Vazio ou Mention ou ID]',
+    usage: '[Flag]',
     aliases: ['prideflag', 'orgulho'],
     cooldown: 5,
     guildOnly: true,
