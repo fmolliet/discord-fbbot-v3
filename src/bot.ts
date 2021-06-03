@@ -115,7 +115,7 @@ export class Bot {
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== 'text') {
                 message.delete({ timeout: 1000 });
-                return message.reply('Você não executar esse comando dentro do PV!');
+                return message.reply('Esse comando é exclusivo para servidor!');
             }
             
             if ( command.privateOnly && message.channel.type !== 'dm' ) {

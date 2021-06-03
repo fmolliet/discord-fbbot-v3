@@ -126,7 +126,6 @@ dist/
 
 # Temporary folders
 tmp/
-temp/
 out/
 target/
 

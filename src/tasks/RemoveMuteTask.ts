@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Client } from 'discord.js';
 import { RULES } from '../configs/rules';
+import { Logger } from '../helpers';
 import TaskRepository from '../repositories/TaskRepository';
 
 export async function RemoveMuteTask( client: Client, taskRepository : TaskRepository ) : Promise<void>{
@@ -16,7 +17,6 @@ export async function RemoveMuteTask( client: Client, taskRepository : TaskRepos
         const guild = client.guilds.cache.get(task!.guildId);
         
         if ( guild ){
-            
             const member = guild?.member(task!.userId!);
             const role = guild?.roles.cache.get(muteRoleId);
             
