@@ -20,28 +20,32 @@ const command : Command = {
             'lesbian': 'lesbian',
             'lgbt': 'lgbt',
             'nonbinary': 'nonbinary',
+            'nonbinarylgbt': 'nonbinarylgbt',
             'pan': 'pan',
             'trans': 'trans',
             'demi': 'demi',
-            'genderfluid': 'genderfluid'
-        }
+            'genderfluid': 'genderfluid',
+            'transgay': 'transgay',
+            'translgbt': 'translgbt'
+        };
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const pride : string = prides[String(args![0]).toLowerCase()];
 
         if ( ! pride || !args ){
-             return message.reply(new MessageEmbed({
+            return message.reply(new MessageEmbed({
                 title: ':gay_pride_flag: Lista de bandeiras disponíveis: :gay_pride_flag:',
                 description: Object.keys(prides).map( key => ` • ${key[0].toUpperCase()}${key.slice(1)}`).join('\n'),
                 color: 0xbd00ff
-            }))
+            }));
         }
         
         message.reply('só um momento, to fazendo aqui!');
         
         const url = message.author.avatarURL({ format: 'png', size: 2048});
         
-        const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` )
+        const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` );
         
         const image = await mergeImage(file, `./resources/pride/${pride}.png`, message.author.id);
         
