@@ -1,6 +1,6 @@
 {
   "name": "typescript-discord-fbbot",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Bot de discord criado para servidor exclusivo",
   "main": "src/index.js",
   "scripts": {
