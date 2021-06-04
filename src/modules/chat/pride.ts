@@ -1,6 +1,6 @@
 import { MessageEmbed, MessageAttachment } from 'discord.js';
 import { Command, CommandParams } from '../../interfaces';
-import getRandomEmoji from '../../utils/getRandomEmoji';
+//import getRandomEmoji from '../../utils/getRandomEmoji';
 import downloadAvatar from '../../utils/downloadAvatar';
 import mergeImage from '../../utils/mergeImage';
 
@@ -31,7 +31,7 @@ const command : Command = {
             'pride': 'pride',
             'trans': 'trans',
             'transace': 'transace',
-            'transabi': 'transabi',
+            'transbi': 'transbi',
             'transgay': 'transgay',
             'transpan': 'transpan'
         };
