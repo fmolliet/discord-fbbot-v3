@@ -126,6 +126,8 @@ dist/
 
 # Temporary folders
 tmp/
+temp/**/*.png
+temp/*.png
 out/
 target/
 

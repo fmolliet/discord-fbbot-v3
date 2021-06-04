@@ -15,18 +15,25 @@ const command : Command = {
         
         const prides = {
             'ace': 'ace',
+            'agender': 'agender',
             'bi': 'bi',
-            'gay': 'gay',
-            'lesbian': 'lesbian',
-            'lgbt': 'lgbt',
-            'nonbinary': 'nonbinary',
-            'nonbinarylgbt': 'nonbinarylgbt',
-            'pan': 'pan',
-            'trans': 'trans',
             'demi': 'demi',
+            'gay': 'gay',
             'genderfluid': 'genderfluid',
+            'genderfluidace': 'genderfluidace',
+            'genderfluidbi': 'genderfluidbi',
+            'genderfluidgay': 'genderfluidgay',
+            'intersex': 'intersex',
+            'lesbian': 'lesbian',
+            'lgbt': 'pride',
+            'nonbinary': 'nonbinary',
+            'pan': 'pan',
+            'pride': 'pride',
+            'trans': 'trans',
+            'transace': 'transace',
+            'transabi': 'transabi',
             'transgay': 'transgay',
-            'translgbt': 'translgbt'
+            'transpan': 'transpan'
         };
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -45,9 +52,10 @@ const command : Command = {
         
         const url = message.author.avatarURL({ format: 'png', size: 2048});
         
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` );
         
-        const image = await mergeImage(file, `./resources/pride/${pride}.png`, message.author.id);
+        const image = await mergeImage(file, `./resources/prideflags/${pride}.png`, message.author.id);
         
         const attachment = new MessageAttachment(image, `${message.author.id}.png`);
         
