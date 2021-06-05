@@ -6,7 +6,7 @@ import mergeImage from '../../utils/mergeImage';
 
 const command : Command = {
     name: 'pride',
-    description: 'Cria avatar com a bandeira.',
+    description: 'Cria avatar com a bandeira.\nUse !pride para ver quais flags estão disponiveis.',
     usage: '[Flag]',
     aliases: ['prideflag', 'orgulho'],
     cooldown: 5,
@@ -23,6 +23,7 @@ const command : Command = {
             'genderfluidace': 'genderfluidace',
             'genderfluidbi': 'genderfluidbi',
             'genderfluidgay': 'genderfluidgay',
+            'genderfluidpan': 'genderfluidpan',
             'intersex': 'intersex',
             'lesbian': 'lesbian',
             'lgbt': 'pride',
