@@ -107,7 +107,7 @@ const command : Command = {
                 ],
                 timestamp: new Date(),
                 footer: {
-                    text: 'Furry Brasil 2.0'
+                    text: `${process.env.APP_NAME}`
                 }              
             }));
         }

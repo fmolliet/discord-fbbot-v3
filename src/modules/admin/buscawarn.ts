@@ -28,7 +28,7 @@ const command : Command = {
                 color: message.guild?.member(message.author.id)?.displayHexColor as string,
                 timestamp: new Date(),
                 footer: {
-                    text: 'Furry Brasil 2.0'
+                    text: `${process.env.APP_NAME}`
                 }  
             });
             

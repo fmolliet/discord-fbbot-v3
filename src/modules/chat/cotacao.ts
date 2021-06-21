@@ -1,11 +1,11 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageEmbed } from "discord.js";
-import { Logger } from "../../helpers";
-import bancocentral from "../../services/bancocentral";
+import { MessageEmbed } from 'discord.js';
+import { Logger } from '../../helpers';
+import bancocentral from '../../services/bancocentral';
 import cotacao from '../../services/cotacao';
 import { Command,CommandParams } from '../../interfaces';
-import bcbsite from "../../services/bancocentralgov";
+import bcbsite from '../../services/bancocentralgov';
 
 const command : Command = {
     name: 'cotacao',
@@ -16,7 +16,9 @@ const command : Command = {
     async execute({ message, args }: CommandParams){
         const dolares = parseFloat(args![0].replace(',','.').trim());
         
-        if (  isNaN(dolares) ) return message.reply('precisa ser um número válido tente: 10, 149,99 , 30!')
+        if (  isNaN(dolares) ) {
+            return message.reply('precisa ser um número válido tente: 10, 149,99 , 30!');
+        }
         
         const today = new Date(Date.now()).getDate();
         let day = '';
@@ -41,20 +43,20 @@ const command : Command = {
             
             const result = await bcbsite.get('/indicadorCambio');
             
-            const prices = result.data.conteudo[0] || result.data.conteudo[1]
+            const prices = result.data.conteudo[0] || result.data.conteudo[1];
             
             // 4 % de Spread
-            const reais : number = prices.valorVenda * 1.04
+            const reais : number = prices.valorVenda * 1.04;
             
 
             // conversão direta
-            const exchange = (dolares * reais)
+            const exchange = (dolares * reais);
             
             // Taxa do IOF 
-            const iof = ( (exchange ) * 0.0638)
+            const iof = ( (exchange ) * 0.0638);
             // Valor Total com IOF e Spread
-            const total = exchange  + iof
-            const total_rounded = total.toFixed(3)
+            const total = exchange  + iof;
+            const total_rounded = total.toFixed(3);
             
             
             
@@ -68,7 +70,7 @@ const command : Command = {
                 color: message.guild?.member(message.author.id)?.displayHexColor as string || 0xbd00ff,    
                 timestamp: new Date(),
                 footer: {
-                    text: 'Furry Brasil 2.0'
+                    text: `${process.env.APP_NAME}`
                 }    
             }));
             
@@ -82,12 +84,12 @@ const command : Command = {
 };
 
 
-function dataAtualFormatada( subdays: number = 0 ) : string{
-    var data = new Date(),
+function dataAtualFormatada( subdays = 0 ) : string{
+    const data = new Date(),
         dia  = (data.getDate()-subdays ).toString().padStart(2, '0'),
         mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
         ano  = data.getFullYear();
-    return mes+"/"+dia+"/"+ano;
+    return mes+'/'+dia+'/'+ano;
 }
 
 export = command;

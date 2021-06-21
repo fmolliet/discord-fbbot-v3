@@ -22,7 +22,7 @@ const command : Command = {
             ],
             timestamp: new Date(),
             footer: {
-                text: 'Furry Brasil 2.0'
+                text: `${process.env.APP_NAME}`
             },
             color: message.guild?.member(message.author.id)?.displayHexColor as string,
         }));

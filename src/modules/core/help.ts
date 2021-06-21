@@ -43,7 +43,7 @@ const command : Command = {
                 ],
                 timestamp: new Date(),
                 footer: {
-                    text: 'Furry Brasil 2.0'
+                    text: `${process.env.APP_NAME}`
                 }
             });
       
@@ -74,7 +74,7 @@ const command : Command = {
             color: 0xbd00ff,
             timestamp: new Date(),
             footer: {
-                text: 'Furry Brasil 2.0'
+                text: `${process.env.APP_NAME}`
             }
         });
  

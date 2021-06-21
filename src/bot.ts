@@ -57,7 +57,7 @@ export class Bot {
     }
 
     private async handleReady() : Promise<void> {
-        
+        // Cheat Sheet de dos eventos: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584#file-discordjs-cheatsheet-js-L141
         this.client.once('ready', async() => {
             // Mostrando nome e url para adicionar
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
@@ -66,7 +66,7 @@ export class Bot {
             this.client.user?.setPresence({
                 activity: {
                     type: 'LISTENING',
-                    name: 'Furry Brasil 2.0 [v3 - 24/7]',
+                    name: `${process.env.APP_NAME} [v3 - 24/7]`,
                 }
             });
             // Load Recursive files

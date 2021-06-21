@@ -10,7 +10,7 @@ const command : Command = {
         message.channel.send(new MessageEmbed({
             color: 0xbd00ff,
             title: ':gay_pride_flag: Felix Silva:gay_pride_flag: ',
-            description: 'Bot mascote do Furry Brasil 2.0, Felix nos esteróides',
+            description: `Bot mascote do ${process.env.APP_NAME}, Felix nos esteróides`,
             fields: [
                 {
                     name: 'Programado por',
@@ -23,7 +23,7 @@ const command : Command = {
             ],
             timestamp: new Date(),
             footer: {
-                text: 'Furry Brasil 2.0'
+                text: `${process.env.APP_NAME}`
             }
         }
         ));
