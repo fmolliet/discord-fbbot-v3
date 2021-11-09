@@ -15,6 +15,7 @@ import WarnRepository    from './repositories/WarnRepository';
 
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
+import InfluxService from './services/InfluxService';
 //import { ClientOpts, RedisClient } from 'redis';
 //import {  } from './tasks';
 
@@ -35,6 +36,8 @@ export class Bot {
     private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
     private warnRepository    = new WarnRepository();
+    
+    private _influxService = new InfluxService()
     
 
     constructor( config : AppConfig ) {
@@ -180,6 +183,8 @@ export class Bot {
             // fim cooldown
             
             try {
+                this._influxService.write('command', command.name);
+                this._influxService.write('execution', 'uses');
                 command.execute({ message,
                     args,
                     commands: this.commands,
@@ -191,6 +196,7 @@ export class Bot {
                 });
             } catch (error) {
                 Logger.error(error);
+                this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }
         });

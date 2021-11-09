@@ -14,6 +14,7 @@
   "author": "fmolliet",
   "license": "ISC",
   "dependencies": {
+    "@influxdata/influxdb-client": "^1.20.0",
     "@types/glob": "^7.1.3",
     "@types/merge-images": "^1.2.0",
     "@types/mongoose": "^5.10.5",
@@ -22,6 +23,7 @@
     "cross-env": "^7.0.3",
     "discord.js": "^12.5.3",
     "dotenv": "^9.0.2",
+    "exceljs": "^4.3.0",
     "images": "^3.2.3",
     "inversify": "^5.1.1",
     "is-image": "^3.0.0",

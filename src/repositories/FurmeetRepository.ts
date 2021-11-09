@@ -22,6 +22,10 @@ export default class FurmeetRepository {
         });
     }
     
+    public async getAllUsers(): Promise<Array<Furmeet>> {
+        return await FurmeetModel.find();
+    }
+    
     public async updateUserState( _id : Types._ObjectId, state : string ):  Promise<boolean>{
         await FurmeetModel.updateOne( { _id },{
             state: state
