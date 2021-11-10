@@ -133,5 +133,5 @@ target/
 
 *.env.local
 *.env.production
-
+*.xlsx
 # End of https://www.toptal.com/developers/gitignore/api/node

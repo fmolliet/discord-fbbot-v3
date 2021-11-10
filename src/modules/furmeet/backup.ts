@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Command, CommandParams } from '../../interfaces';
+import { Message, MessageAttachment } from 'discord.js';
+import { Logger } from '../../helpers';
+import createReport from '../../helpers/reporter';
+import { Command, CommandParams, CreatedReporter, Furmeet } from '../../interfaces';
+import { ReportUser } from '../../interfaces/ReportUser';
 import validateState from '../../utils/validateState';
 
 const command: Command = {
@@ -7,28 +11,35 @@ const command: Command = {
     description: 'Realiza o backup do furmeet para a staff!',
     guildOnly: true,
     adminOnly: true,
-    cooldown: 15,
-    async execute({ message, furmeetRepository }: CommandParams) {
+    cooldown: 120,
+    async execute({ message, furmeetRepository }: CommandParams) : Promise<Message[]|Message>  {
 
-        const founded: string[] = [];
+        const founded: ReportUser[] = [];
+        
+        const report : CreatedReporter  = await createReport();
 
 
         const furs = await furmeetRepository?.getAllUsers();
 
         if (furs?.length !== 0) {
 
-            message.reply('Montando backup...');
+            message.channel.send('Montando backup...');
 
-            await Promise.all(furs!.map((fur) => {
+            await Promise.all(furs!.map((fur: Furmeet) => {
                 const furName = message.guild?.member(fur.userId)?.displayName;
 
                 if (furName) {
-                    founded.push(furName);
+                    //founded.push({...fur, name: furName });
+                    report.worksheet.addRow({state: fur.state,userId: fur.userId, name: furName }).commit()
                 }
             }));
-
-            return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``, { split: true });
-
+            message.reply('Estarei enviando em seu privado o arquivo de backup!');
+            
+            report.workbook.commit().then(function() {
+                Logger.info('Backup executado com sucesso!');
+            });
+            
+            return (await message.author.createDM()).send('Segue backup dos membros, abraços.', new MessageAttachment(report.filename));
         }
         return message.reply('Infelizmente, não achei ninguem nesse estado!');
 

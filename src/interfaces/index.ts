@@ -8,3 +8,4 @@ export * from './UserFurmeet';
 export * from './Setting';
 export * from './Task';
 export * from './Warn';
+export * from './CreatedReporter';
