@@ -75,8 +75,8 @@ const command : Command = {
             }));
             
             
-        } catch ( err ) {
-            Logger.error(err.message);
+        } catch ( err: unknown ) {
+            Logger.error(err);
             return message.reply('não consegui executar essa ação');
         }
 

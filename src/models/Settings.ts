@@ -26,6 +26,6 @@ const SettingsSchema : Schema = new Schema({
     id: false,
 });
 
-const SettingModel: Model<SettingDocument> = model('SettingDocument', SettingsSchema);
+const SettingModel: Model<SettingDocument> = model<SettingDocument>('SettingDocument', SettingsSchema);
 
 export default SettingModel;

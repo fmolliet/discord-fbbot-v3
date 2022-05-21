@@ -22,6 +22,6 @@ const FurmeetSchema : Schema = new Schema({
     id: false,
 });
 
-const FurmeetModel: Model<FurmeetDocument> = model('FurmeetDocument', FurmeetSchema);
+const FurmeetModel: Model<FurmeetDocument> = model<FurmeetDocument>('FurmeetDocument', FurmeetSchema);
 
 export default FurmeetModel;

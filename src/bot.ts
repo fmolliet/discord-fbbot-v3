@@ -16,6 +16,7 @@ import WarnRepository    from './repositories/WarnRepository';
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
+import TwitterService from './services/TwitterService';
 //import { ClientOpts, RedisClient } from 'redis';
 //import {  } from './tasks';
 
@@ -38,6 +39,7 @@ export class Bot {
     private warnRepository    = new WarnRepository();
     
     private _influxService = new InfluxService()
+    private _twitterService  = new TwitterService();
     
 
     constructor( config : AppConfig ) {
@@ -192,7 +194,8 @@ export class Bot {
                     setPrefix: this.setPrefix,
                     furmeetRepository: this.furmeetRepository,
                     taskRepository: this.taskRepository,
-                    warnRepository: this.warnRepository
+                    warnRepository: this.warnRepository,
+                    twitterService: this._twitterService
                 });
             } catch (error) {
                 Logger.error(error);

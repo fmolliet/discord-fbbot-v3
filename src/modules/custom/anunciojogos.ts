@@ -8,13 +8,16 @@ const command : Command = {
     usage: '[Anuncio]',
     guildOnly: true,
     adminOnly: true,
-    execute({ message, client } : CommandParams){
+    execute({ message, client, twitterService} : CommandParams){
 
         const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : RULES.gameChannel;
         const channel = client?.channels.cache.get(channelId);
 
+        const data = message.content.replace('!anunciojogos', '');
+        
         if (channel?.isText() ) {
-            (<TextChannel> channel).send(message.content.replace('!anunciojogos', ''), { split: true });
+            (<TextChannel> channel).send(data, { split: true });
+            twitterService?.tweet(data);
         }
 
     }

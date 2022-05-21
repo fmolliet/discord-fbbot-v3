@@ -26,7 +26,7 @@ export default class FurmeetRepository {
         return await FurmeetModel.find();
     }
     
-    public async updateUserState( _id : Types._ObjectId, state : string ):  Promise<boolean>{
+    public async updateUserState( _id : Types.ObjectId, state : string ):  Promise<boolean>{
         await FurmeetModel.updateOne( { _id },{
             state: state
         });

@@ -2,7 +2,7 @@ import { Snowflake } from 'discord.js';
 import { Types , Document }  from 'mongoose';
 
 export interface Furmeet {
-    _id ?: Types._ObjectId,
+    _id ?: Types.ObjectId,
     userId : Snowflake,
     state : string,
     city ?: string

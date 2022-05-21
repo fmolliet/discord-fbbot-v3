@@ -26,6 +26,6 @@ const TasksSchema : Schema = new Schema({
     id: false,
 });
 
-const TaskModel: Model<TaskDocument> = model('TaskDocument', TasksSchema);
+const TaskModel: Model<TaskDocument> = model<TaskDocument>('TaskDocument', TasksSchema);
 
 export default TaskModel;
