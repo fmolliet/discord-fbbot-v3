@@ -1,26 +1,30 @@
-import { TwitterApi } from 'twitter-api-v2';
+
+import axios, { AxiosInstance } from "axios";
+import getTwitterHeaderOauth10a from '../utils/getTwitterHeaderOauth10a';
+import { Logger } from '../helpers';
 //@Service()
 class TwitterService {
     
-    client : TwitterApi;
+    client : AxiosInstance;
     
-    private consumerKey     : string = process.env.TWITTER_CONSUMER_KEY        || ''
-    private consumerSecret   : string = process.env.TWITTER_CONSUMER_SECRET    || ''
-    private accessToken     : string = process.env.TWITTER_ACCESS_TOKEN        || ''
-    private accessSecret    : string = process.env.TWITTER_ACCESS_TOKEN_SECRET || ''
-    private bearerToken     : string = process.env.TWITTER_BEARER_TOKEN        || ''
+    private twitterDomain : string = 'https://api.twitter.com';
     
     constructor(){
-        this.client = new TwitterApi({
-            appKey: this.consumerKey,
-            appSecret: this.consumerSecret,
-            accessToken: this.accessToken,
-            accessSecret: this.accessSecret
+        this.client = axios.create({
+            baseURL: this.twitterDomain
         });
     }
     
     async tweet(data: string){
-        return this.client.v2.tweet(data);
+        
+        const oauthHeader = await getTwitterHeaderOauth10a();
+        
+        await this.client.post("/2/tweets", {text: data} , {
+            headers:{
+                Authorization: oauthHeader
+            }
+        })
+        Logger.info('Post realizado no twitter com sucesso!')
     }
 }
 
