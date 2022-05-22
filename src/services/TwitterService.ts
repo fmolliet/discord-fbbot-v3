@@ -19,12 +19,12 @@ class TwitterService {
         
         const oauthHeader = await getTwitterHeaderOauth10a();
         
-        await this.client.post("/2/tweets", {text: data} , {
-            headers:{
-                Authorization: oauthHeader
-            }
-        })
-        Logger.info('Post realizado no twitter com sucesso!')
+         await this.client.post("/2/tweets", {text: data.replace("@everyone", "")} , {
+             headers:{
+                 Authorization: oauthHeader
+             }
+         });
+        Logger.info('Post realizado no twitter com sucesso!');
     }
 }
 
