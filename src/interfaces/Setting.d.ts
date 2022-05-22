@@ -1,7 +1,6 @@
-import { Types } from 'mongoose';
+import { Types, Document } from 'mongoose';
 
 export interface Setting {
-    _id ?: Types._ObjectId
     guildId: string
     name : string
     value : string

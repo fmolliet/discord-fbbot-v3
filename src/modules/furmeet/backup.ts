@@ -4,7 +4,7 @@ import { Logger } from '../../helpers';
 import createReport from '../../helpers/reporter';
 import { Command, CommandParams, CreatedReporter, Furmeet } from '../../interfaces';
 import { ReportUser } from '../../interfaces/ReportUser';
-import validateState from '../../utils/validateState';
+
 
 const command: Command = {
     name: 'backup',

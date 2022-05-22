@@ -1,7 +1,6 @@
 import { Types, Document } from 'mongoose';
 
 export interface Warn {
-    _id ?: Types._ObjectId
     guildId : string
     userId  ?: string
     description : string

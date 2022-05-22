@@ -26,6 +26,6 @@ const WarnSchema : Schema = new Schema({
     id: false,
 });
 
-const WarnModel: Model<WarnDocument> = model('WarnDocument', WarnSchema);
+const WarnModel: Model<WarnDocument> = model<WarnDocument>('WarnDocument', WarnSchema);
 
 export default WarnModel;

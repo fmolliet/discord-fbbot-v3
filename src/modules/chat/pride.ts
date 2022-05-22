@@ -51,7 +51,7 @@ const command : Command = {
         
         message.reply('só um momento, to fazendo aqui!');
         
-        const url = message.author.avatarURL({ format: 'png', size: 2048});
+        const url = message.author.displayAvatarURL({ format: 'png', size: 2048});
         
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` );
