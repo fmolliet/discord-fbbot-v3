@@ -7,7 +7,7 @@ export default async function(){
         process.env.TWITTER_CONSUMER_KEY || "",
         process.env.TWITTER_CONSUMER_SECRET|| "",
         '1.0', null, 'HMAC-SHA1'
-      )
+      );
 
     
       const body =  oauth.authHeader(
@@ -15,7 +15,7 @@ export default async function(){
         process.env.TWITTER_ACCESS_TOKEN || "",
         process.env.TWITTER_ACCESS_TOKEN_SECRET ||"",
         "POST"
-      )
+      );
     
       return body;
 }
