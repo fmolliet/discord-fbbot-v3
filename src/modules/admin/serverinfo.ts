@@ -6,7 +6,7 @@ const command : Command = {
     description: 'Retorna dados do servidor.',
     guildOnly: true,
     adminOnly: true,
-    execute( {message } : CommandParams){
+    async execute( {message } : CommandParams){
         message.channel.send(new MessageEmbed({
             title: 'Informações o servidor',
             description: 'Abaixo tem algumas informações do servidor',

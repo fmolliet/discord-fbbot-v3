@@ -5,7 +5,7 @@ const command : Command = {
     name: 'info',
     description: 'Mostra dados do criador e informações sobre',
     aliases: ['sobre'],
-    execute({message } : CommandParams){
+    async execute({message } : CommandParams){
         //https://anidiots.guide/first-bot/using-embeds-in-messages
         message.channel.send(new MessageEmbed({
             color: 0xbd00ff,

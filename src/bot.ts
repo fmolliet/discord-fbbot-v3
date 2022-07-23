@@ -100,7 +100,7 @@ export class Bot {
     }
     
     private handleMessage() : void {
-        this.client.on('message', (message: Message) => {
+        this.client.on('message', async (message: Message) => {
             
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
@@ -187,7 +187,7 @@ export class Bot {
             try {
                 this._influxService.write('command', command.name);
                 this._influxService.write('execution', 'uses');
-                command.execute({ message,
+                await command.execute({ message,
                     args,
                     commands: this.commands,
                     client: this.client,

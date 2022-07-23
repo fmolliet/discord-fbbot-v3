@@ -11,7 +11,7 @@ const command : Command = {
     async execute({ message, client , twitterService} : CommandParams){
         
         const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : RULES.announceChannel;
-        const channel = client?.channels.cache.get(channelId);
+        const channel = client?.channels?.cache.get(channelId);
 
         if (channel?.isText() ) {
             const anuncio = message.content.replace('!anuncio', '');

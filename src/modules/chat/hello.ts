@@ -5,7 +5,7 @@ const command : Command = {
     name: 'hello',
     aliases: ['olar', 'ola', 'hellor', 'hellow', 'oi'],
     description: 'Manda uns olar pra quem mandar o comando',
-    execute({ message } : CommandParams){
+    async execute({ message } : CommandParams){
         if(message.author.id === RULES.owner ) {
             message.channel.send(':wave: Oi pai! >w<');
         } else {

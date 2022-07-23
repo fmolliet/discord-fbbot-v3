@@ -7,7 +7,7 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     hasAttachment : true,
-    execute({ message, client } : CommandParams){
+    async execute({ message, client } : CommandParams){
         
         const image = message.attachments.first()?.url;
         if ( isImage(image!) ) {

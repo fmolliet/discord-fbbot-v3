@@ -7,7 +7,7 @@ const command : Command = {
     description: 'Retorna o link do avatar da pessoa marcada.',
     usage: '[Vazio ou Mention ou ID]',
     aliases: ['icon', 'pfp'],
-    execute({ message } : CommandParams){
+    async execute({ message } : CommandParams){
         if (!message.mentions.users.size) {
             const url = message.author.avatarURL({ format: 'png', size: 2048});
           

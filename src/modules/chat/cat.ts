@@ -5,7 +5,7 @@ const command : Command = {
     aliases: ['cats', 'gato', 'gatos'],
     description: 'Manda gifs de gatos fofos',
     cooldown: 5,
-    execute( { message } : CommandParams){
+    async execute( { message } : CommandParams){
         const cats = [
             'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
             'https://media2.giphy.com/media/8vQSQ3cNXuDGo/giphy.gif',

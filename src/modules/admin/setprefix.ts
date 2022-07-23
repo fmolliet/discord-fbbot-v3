@@ -10,7 +10,7 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     hasArgs : true,
-    execute({ message, args, setPrefix }: CommandParams){
+    async execute({ message, args, setPrefix }: CommandParams){
         // Não da para fazer injeção de dependencia pois nao passa a referencia da classe
         const newPrefix = args![0];
         if ( newPrefix &&  newPrefix.length > 0 && newPrefix.match(/(\!|\+|\$|\.|\-)/)){

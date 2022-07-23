@@ -11,7 +11,7 @@ const command : Command = {
     aliases: ['commands', 'ajuda'],
     usage: '[Nome do comando]',
     cooldown: 5,
-    execute({ message , args, commands } : CommandParams) {
+    async execute({ message , args, commands } : CommandParams) {
         // Adicionado filtro para onwers e admins
         const isAdmin = ( message.channel.type !== 'dm' && message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) || RULES.owners.includes(message.author.id);
         const allComands = commands?.map(( command : Command ) => {
