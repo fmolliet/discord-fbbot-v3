@@ -14,5 +14,5 @@ export interface Command {
     channelId ?: string
     hasMention ?: boolean
     hasAttachment ?: boolean
-    async execute( param : CommandParams): void
+    execute( param : CommandParams): void
 }
