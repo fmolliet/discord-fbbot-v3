@@ -1,6 +1,7 @@
-import { Activity, MessageAttachment, TextChannel } from 'discord.js';
+import { MessageAttachment, TextChannel } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { CommandParams, Command } from '../../interfaces';
+import { Logger } from '../../helpers';
 
 const command : Command = {
     name: 'anuncio',
@@ -28,9 +29,20 @@ const command : Command = {
             } else {
                 (<TextChannel> channel).send(message.content.replace(anuncio, ''), { split: true });
             }
-            await twitterService?.tweet(anuncio);
+            try {
+                await twitterService?.tweet(anuncio);
+                return message.reply("Postado no chat de anuncio no twitter com sucesso.");
+            } catch ( error: any ){
+                error.response.data.errors.map( (err:any)=>{
+                    //Logger.error( err.parameters )
+                    Logger.error( "Erro ao enviar twitter: " + err.message )
+                });
+                Logger.error( `[${error.response.data.title}] ${error.response.data.detail}`)
+                return message.reply(`Olha, consegui postar no chat de anuncio, mas deu erro ao chamar o twitter.\nErro detalhado:${error.response.data.detail}`);
+            }
+            
         }
-
+        return message.reply("Esse canal não é de texto")
     }
 };
 

@@ -1,3 +1,4 @@
+import { Message } from 'discord.js';
 import { CommandParams } from './CommandParams';
 
 export interface Command {
@@ -14,5 +15,5 @@ export interface Command {
     channelId ?: string
     hasMention ?: boolean
     hasAttachment ?: boolean
-    execute( param : CommandParams): void
+    execute( param : CommandParams): Promise<Message|Message[]|void>
 }

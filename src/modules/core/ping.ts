@@ -7,7 +7,7 @@ const command : Command = {
     privateOnly: true,
     cooldown: 10,
     async execute({ message } : CommandParams ){
-        message.channel.send('Pong.');
+        return message.channel.send('Pong.');
     }
 };
 

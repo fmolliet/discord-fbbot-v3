@@ -7,7 +7,7 @@ const command : Command = {
     aliases: ['sobre'],
     async execute({message } : CommandParams){
         //https://anidiots.guide/first-bot/using-embeds-in-messages
-        message.channel.send(new MessageEmbed({
+        return message.channel.send(new MessageEmbed({
             color: 0xbd00ff,
             title: ':gay_pride_flag: Felix Silva:gay_pride_flag: ',
             description: `Bot mascote do ${process.env.APP_NAME}, Felix nos esteróides`,

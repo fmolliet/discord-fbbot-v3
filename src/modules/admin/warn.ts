@@ -98,7 +98,7 @@ const command : Command = {
             }
             
             // Manda mensagem no pv
-            return member?.send( new MessageEmbed({
+            member?.send( new MessageEmbed({
                 title: `Você recebeu o seu ${warns!.length}º warning! `,
                 color: '#FF0000',
                 fields: [
@@ -110,6 +110,8 @@ const command : Command = {
                     text: `${process.env.APP_NAME}`
                 }              
             }));
+            
+            return message.reply(`Enviado warn para o membro \`${member?.displayName}\`!`);
         }
         return  message.reply(`membro \`${userId}\` não localizado!`);
     }

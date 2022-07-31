@@ -30,7 +30,7 @@ const command : Command = {
             }).setImage(url as string));
         }
         
-        message.reply('Só consigo pegar avatar de outras pessoas dentro do servidor!');
+        return message.reply('Só consigo pegar avatar de outras pessoas dentro do servidor!');
     }
 };
 

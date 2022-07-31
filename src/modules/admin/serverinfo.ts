@@ -7,7 +7,7 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     async execute( {message } : CommandParams){
-        message.channel.send(new MessageEmbed({
+        return message.channel.send(new MessageEmbed({
             title: 'Informações o servidor',
             description: 'Abaixo tem algumas informações do servidor',
             fields: [

@@ -11,7 +11,7 @@ const command : Command = {
     channelId: '376518334679613440',
     cooldown: 5,
     hasArgs: true,
-    async execute( { message, args, furmeetRepository } : CommandParams){
+    async execute( { message, args, furmeetRepository } : CommandParams) {
         
         const founded : string[]= [];
         const state = args![0].toUpperCase();

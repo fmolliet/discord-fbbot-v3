@@ -51,7 +51,7 @@ const command : Command = {
             return message.author.send(messageEmbed)
                 .then(() => {
                     if (message.channel.type === 'dm') {
-                        return;
+                       return;
                     }
                     message.reply('Eu irei te enviar todos os comandos no PV!');
                 })
@@ -89,7 +89,7 @@ const command : Command = {
         messageEmbed.addField('Cooldown:', `${command.cooldown || 3} segundo(s)`);
 
         //message.channel.send(data, { split: true });
-        message.channel.send(messageEmbed);
+        return message.channel.send(messageEmbed);
     },
 };
 
