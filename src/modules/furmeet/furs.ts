@@ -24,15 +24,15 @@ const command : Command = {
                 // TODO: apresentar melhor mensagem ou com variação conforme a quantidade
                 message.reply('Localizei uma galera! Estou preparando aqui a lista ...');
 
-                await Promise.all(furs!.map( (fur) => {
-                    const furName = message.guild?.member( fur.userId)?.displayName;
+                await Promise.all(furs!.map( async (fur) => {
+                    const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
                     
                     if ( furName ){
                         founded.push(furName);
                     }
                 }));
                 
-                return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``, {split: true});
+                return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``);
 
             }
             return message.reply('Infelizmente, não achei ninguem nesse estado!');  

@@ -1,4 +1,4 @@
-import { MessageAttachment, TextChannel } from 'discord.js';
+import { Attachment, MessagePayload, TextChannel } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { Command, CommandParams } from '../../interfaces';
 import { Logger } from '../../helpers';
@@ -16,20 +16,20 @@ const command : Command = {
 
         
         
-        if (channel?.isText() ) {
+        if (channel?.isTextBased() ) {
             
-            const anuncio = message.content.replace('!anunciojogos', '');
+            const anuncio :string = message.content.replace('!anunciojogos', '');
             
             if ( message.attachments ){
-                const anexos : MessageAttachment[] = [];
+                const anexos : Attachment[] = [];
                 
                 for await ( const [snowflake, attachment] of message.attachments){
                     anexos.push(attachment);
                 }
                 
-                (<TextChannel> channel).send(anuncio, { split: true , files: anexos });
+                (<TextChannel> channel).send(new MessagePayload(<TextChannel> channel, { content: anuncio , files: anexos }));
             } else {
-                (<TextChannel> channel).send(anuncio, { split: true });
+                (<TextChannel> channel).send(anuncio);
             }
            
             try {
@@ -46,8 +46,8 @@ const command : Command = {
             
         }
         return message.reply("Esse canal não é de texto")
-
     }
+    
 };
 
 export = command;
