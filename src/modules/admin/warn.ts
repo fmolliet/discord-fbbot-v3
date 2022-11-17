@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder  } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
@@ -27,9 +27,9 @@ const command : Command = {
         const removeAt = new Date(Date.now() + muteTime) ;
         
         // Grava tarefa no banco
-        if ( message.guild?.member(userId) ){
+        if ( message.guild?.members.fetch(userId) ){
             
-            const member = message.guild?.member(userId);
+            const member = await message.guild?.members.fetch(userId);
             
             // Remove o mention
             args?.shift();
@@ -39,9 +39,9 @@ const command : Command = {
             
             const description = args?.join(' ') || '';
             // Adiciona o warn
-            await warnRepository?.createWarn({description: description, userId: member?.id, guildId: message.guild.id, createdAt: new Date(Date.now()) });
+            await warnRepository?.createWarn({description: description, userId:  member.id, guildId: message.guild.id, createdAt: new Date(Date.now()) });
             // Conta quantos warns a pessoa ja tomou para atribuir puniÇão
-            const warns = await warnRepository?.getWarnsByUserId(member?.id);
+            const warns = await warnRepository?.getWarnsByUserId(member.id);
             let punicao = '';
             // Se foi menos que 3 warns ele irá mutar
             if (warns!.length < 3 ) {
@@ -54,7 +54,7 @@ const command : Command = {
                 
                 // Mute tag
                 member?.roles.add(role).then(()=> message.reply('warn aplicado, o membro foi punido com mute!'))
-                    .catch((error)=>{
+                    .catch((error: { message: any; })=>{
                         Logger.error(error.message);
                         message.channel.send('Não consegui adicionar a rolede mute desse cara!');
                     });  
@@ -63,8 +63,8 @@ const command : Command = {
                 
                 setTimeout( async()=> {
                     member?.roles.remove(role)
-                        .then(async()=>  await taskRepository?.deleteTask(task!))
-                        .catch((error)=>{
+                        .then(async()=>  taskRepository?.deleteTask(task!))
+                        .catch((error: { message: any; })=>{
                             Logger.error(error.message);
                             message.channel.send('Não consegui remover a role de mute desse cara!');
                         });  
@@ -79,7 +79,7 @@ const command : Command = {
                 
                 member?.kick('Kickado por ter tomado warning demais')
                     .then(()=> message.reply('warn aplicado, o membro foi punido com Kick!'))
-                    .catch((error)=>{
+                    .catch((error: { message: any; })=>{
                         Logger.error(error.message);
                         message.reply('ouve um erro na execução do kick, provavelmente estou sem permissão!');
                     });  
@@ -90,7 +90,7 @@ const command : Command = {
                 
                 member?.ban({reason: 'Tomou 4 warnings ¯\\_(ツ)_/¯'})
                     .then(()=> message.reply('warn aplicado, o membro foi punido com Ban!'))
-                    .catch((error)=>{
+                    .catch((error: { message: any; })=>{
                         Logger.error(error.message);
                         message.reply('ouve um erro na execução do ban, provavelmente estou sem permissão!');
                     });   
@@ -98,18 +98,23 @@ const command : Command = {
             }
             
             // Manda mensagem no pv
-            member?.send( new MessageEmbed({
-                title: `Você recebeu o seu ${warns!.length}º warning! `,
-                color: '#FF0000',
-                fields: [
-                    { name: 'Motivo:', value: description },
-                    { name: 'Punição:', value: punicao, inline: true}
-                ],
-                timestamp: new Date(),
-                footer: {
-                    text: `${process.env.APP_NAME}`
-                }              
-            }));
+            
+            
+            member?.send( { embeds: [
+                    {
+                        title: `Você recebeu o seu ${warns!.length}º warning! `,
+                        color: 0xFF0000,
+                        fields: [
+                            { name: 'Motivo:', value: description },
+                            { name: 'Punição:', value: punicao, inline: true}
+                        ],
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: `${process.env.APP_NAME}`
+                        }              
+                    }
+                ]
+            });
             
             return message.reply(`Enviado warn para o membro \`${member?.displayName}\`!`);
         }

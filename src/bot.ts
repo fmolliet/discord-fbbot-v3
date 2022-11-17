@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Client, Message, Collection } from 'discord.js';
+import {Client, Message, Collection, ClientEvents, ActivityType, GatewayIntentBits } from 'discord.js';
 import { Command, AppConfig, DatabaseConfig } from './interfaces';
 import glob          from 'glob';
 import { promisify } from 'util';
@@ -44,7 +44,7 @@ export class Bot {
 
     constructor( config : AppConfig ) {
 
-        this.client = new Client();
+        this.client = new Client({intents: GatewayIntentBits.GuildMessages});
         this.token = config.token;
         this.prefix = config.prefix;
         this.databaseConfig = config.db;
@@ -63,16 +63,22 @@ export class Bot {
 
     private async handleReady() : Promise<void> {
         // Cheat Sheet de dos eventos: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584#file-discordjs-cheatsheet-js-L141
+        
         this.client.once('ready', async() => {
             // Mostrando nome e url para adicionar
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
             // Alterando a presence
             this.client.user?.setPresence({
-                activity: {
-                    type: 'LISTENING',
-                    name: `${process.env.APP_NAME} [v3 - 24/7]`,
-                }
+                
+            })
+            this.client.user?.setPresence({
+                activities: [
+                    {
+                        type: ActivityType.Listening,
+                        name: `${process.env.APP_NAME} [v3 - 24/7]`,
+                    }
+                ]
             });
             // Load Recursive files
             const files = await globPromise('src/modules/**/*.ts');
@@ -100,11 +106,12 @@ export class Bot {
     }
     
     private handleMessage() : void {
-        this.client.on('message', async (message: Message) => {
+        this.client.on('messageCreate', async (message: Message) => {
+
             
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
-                || message.webhookID ) {
+                || message.webhookId ) {
                 return;
             }
             
@@ -116,7 +123,7 @@ export class Bot {
             if (!command) {
                 return;
             }
-            
+            /*
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== 'text') {
                 message.delete({ timeout: 1000 });
@@ -156,12 +163,12 @@ export class Bot {
                 }
             }
             
-            if ( command.hasAttachment && !message.attachments.first() ){
+            if ( command.hasAttachment && (!message.attachments ||message.attachments ) ){
                 return message.reply('não tem nenhum anexo nessa mensagem');
             }
             
             // TODO implementar filtro de ChannelID para executar comando somente em um certo canal.
-            
+                
             //COOLDOWN
             if (!this.cooldowns.has(command.name)) {
                 this.cooldowns.set(command.name, new Collection());
@@ -201,8 +208,9 @@ export class Bot {
                 Logger.error(error);
                 this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
-            }
+            }*/
         });
+        
     }
     
     private getCommand( commandName: string ) :  Command  {
