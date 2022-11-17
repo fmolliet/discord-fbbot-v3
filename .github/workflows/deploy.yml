@@ -1,7 +1,11 @@
 
 name: Push Container to Heroku
 
-on: [push]
+on: 
+  push:
+    branches:
+    - main
+    - release/*
 
 jobs:
   build:
