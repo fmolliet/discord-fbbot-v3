@@ -21,7 +21,7 @@
     "@types/node": "^15.3.0",
     "axios": "^0.21.1",
     "cross-env": "^7.0.3",
-    "discord.js": "^12.5.3",
+    "discord.js": "^14.6.0",
     "dotenv": "^9.0.2",
     "exceljs": "^4.3.0",
     "images": "^3.2.3",
