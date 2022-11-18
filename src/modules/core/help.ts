@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RULES } from '../../configs/rules';
 import { Command, CommandParams } from '../../interfaces';
-import { MessageEmbed } from 'discord.js';
+import { ChannelType, EmbedBuilder } from 'discord.js';
 
 const command : Command = {
     name: 'help',
@@ -13,7 +13,7 @@ const command : Command = {
     cooldown: 5,
     async execute({ message , args, commands } : CommandParams) {
         // Adicionado filtro para onwers e admins
-        const isAdmin = ( message.channel.type !== 'dm' && message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') ) || RULES.owners.includes(message.author.id);
+        const isAdmin = ( message.channel.type !== ChannelType.DM && (await message.guild?.members.fetch(message.author.id))?.permissions.has('Administrator') ) || RULES.owners.includes(message.author.id);
         const allComands = commands?.map(( command : Command ) => {
             if ( command.adminOnly && isAdmin ) {
                 return command.name;
@@ -26,14 +26,14 @@ const command : Command = {
         
         // Buscar de maneira dinamica o prefixo ou ser sempre ! para pv
         if (!args?.length) {
-            const messageEmbed = new MessageEmbed({
+            const messageEmbed = new EmbedBuilder({
                 title: 'Sobre o comando de ajuda:',
                 description: 'Lista de todos os meus comandos ou um comando especifico.',
                 color: 0xbd00ff,
                 fields: [
                     {
                         name: 'Comandos disponíveis para você:',
-                        value: allComands?.filter(( command )=> command).join(', ')
+                        value: allComands?.filter(( command )=> command).join(', ') || ""
                     },
                     {
                         name: 'Obs:',
@@ -41,16 +41,16 @@ const command : Command = {
                     }
                     
                 ],
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 footer: {
                     text: `${process.env.APP_NAME}`
                 }
             });
       
 
-            return message.author.send(messageEmbed)
+            return message.author.send({embeds: [messageEmbed]})
                 .then(() => {
-                    if (message.channel.type === 'dm') {
+                    if (message.channel.type === ChannelType.DM) {
                        return;
                     }
                     message.reply('Eu irei te enviar todos os comandos no PV!');
@@ -68,7 +68,7 @@ const command : Command = {
             return message.reply('Esse comando não é valido!');
         }
         
-        const messageEmbed = new MessageEmbed({
+        const messageEmbed = new EmbedBuilder({
             title: `Sobre o comando ${command.name}:`,
             description: command.description ? command.description : '',
             color: 0xbd00ff,
@@ -79,17 +79,26 @@ const command : Command = {
         });
  
         if (command.aliases) {
-            messageEmbed.addField('Apelidos:', command.aliases.join(', '));
+            messageEmbed.addFields({
+                name: 'Apelidos:', 
+                value: command.aliases.join(', ')
+            });
         }
         
         if (command.usage) {
-            messageEmbed.addField('Exemplo de uso:', `${RULES.prefix}${command.name} ${command.usage}`);
+            messageEmbed.addFields({
+                name:'Exemplo de uso:',
+                value: `${RULES.prefix}${command.name} ${command.usage}`
+            });
         }
 
-        messageEmbed.addField('Cooldown:', `${command.cooldown || 3} segundo(s)`);
+        messageEmbed.addFields({
+            name:'Cooldown:',
+            value: `${command.cooldown || 3} segundo(s)`
+        });
 
         //message.channel.send(data, { split: true });
-        return message.channel.send(messageEmbed);
+        return message.channel.send({embeds:[messageEmbed]});
     },
 };
 
