@@ -17,22 +17,24 @@ export async function RemoveMuteTask( client: Client, taskRepository : TaskRepos
         const guild = client.guilds.cache.get(task!.guildId);
         
         if ( guild ){
-            const member = await guild?.members.fetch(task!.userId!);
-            const role = guild?.roles.cache.get(muteRoleId);
-            
-            if (member && role){
+            try {
+                const member = await guild?.members.fetch(task!.userId!);
+                const role = guild?.roles.cache.get(muteRoleId);
                 
-                const muteRemainTime = (task?.executeOn.getTime() || 1 ) - now.getTime();
-
-                setTimeout( async()=> {
-                    member?.roles.remove(role!);
-                    await taskRepository?.deleteTask(task!);
-                },  ( (task?.executeOn.getTime() || 1) > now.getTime() ? muteRemainTime : 1) );
+                if (member && role){
+                    
+                    const muteRemainTime = (task?.executeOn.getTime() || 1 ) - now.getTime();
+    
+                    setTimeout( async()=> {
+                        member?.roles.remove(role!);
+                        await taskRepository?.deleteTask(task!);
+                    },  ( (task?.executeOn.getTime() || 1) > now.getTime() ? muteRemainTime : 1) );
+                }
+            } catch ( err ){
+                Logger.warn(`Erro ao localizar usuário, na task de remoção de mute: ${task!.userId!}`)
             }
-        
-        
-        }
-        
+
+        }        
         
     }
     
