@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from '@discordjs/builders';
 import { CommandParams,Command } from '../../interfaces';
 
 const command : Command = {
@@ -7,7 +7,7 @@ const command : Command = {
     aliases: ['sobre'],
     async execute({message } : CommandParams){
         //https://anidiots.guide/first-bot/using-embeds-in-messages
-        return message.channel.send(new MessageEmbed({
+        return message.channel.send({embeds: [new EmbedBuilder({
             color: 0xbd00ff,
             title: ':gay_pride_flag: Felix Silva:gay_pride_flag: ',
             description: `Bot mascote do ${process.env.APP_NAME}, Felix nos esteróides`,
@@ -21,12 +21,12 @@ const command : Command = {
                     value: 'Typescript'
                 }
             ],
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             footer: {
                 text: `${process.env.APP_NAME}`
             }
         }
-        ));
+        )]});
     }
 };
 

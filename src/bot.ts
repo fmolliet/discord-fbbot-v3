@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Client, Message, Collection, ClientEvents, ActivityType, GatewayIntentBits } from 'discord.js';
+import {Client, Message, Collection, ClientEvents, ActivityType, GatewayIntentBits, ChannelType } from 'discord.js';
 import { Command, AppConfig, DatabaseConfig } from './interfaces';
 import glob          from 'glob';
 import { promisify } from 'util';
@@ -17,6 +17,7 @@ import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 import TwitterService from './services/TwitterService';
+import { toNamespacedPath } from 'path/posix';
 //import { ClientOpts, RedisClient } from 'redis';
 //import {  } from './tasks';
 
@@ -123,32 +124,43 @@ export class Bot {
             if (!command) {
                 return;
             }
-            /*
+            
             // verifica se são comandos de servidor somente
-            if (command.guildOnly && message.channel.type !== 'text') {
-                message.delete({ timeout: 1000 });
-                return message.reply('Esse comando é exclusivo para servidor!');
+            if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
+                setTimeout(()=>{
+                    message.delete();
+                })
+                message.reply('Esse comando é exclusivo para servidor!');
+                return;
             }
             
-            if ( command.privateOnly && message.channel.type !== 'dm' ) {
-                message.delete({ timeout: 1000 });
-                return message.author.send('Esse comando somente pode ser executado no pv!');
+            if ( command.privateOnly && message.channel.type !== ChannelType.DM ) {
+                
+                setTimeout(()=>{
+                    message.delete();
+                })
+                message.author.send('Esse comando somente pode ser executado no pv!');
+                return;
             }
             
-            if ( command.adminOnly &&  !message.guild?.member(message.author.id)?.permissions.has('ADMINISTRATOR') && !message.guild?.member(message.author.id)?.hasPermission('KICK_MEMBERS') ) {
-                return message.reply('Somente administradores podem utilizar esse comando!');
+            if ( command.adminOnly &&  !(await message.guild?.members.fetch(message.author.id))?.permissions.has( 'Administrator') && !(await message.guild?.members.fetch(message.author.id))?.permissions.has('KickMembers') ) {
+                message.reply('Somente administradores podem utilizar esse comando!');
+                return;
             }
             
             if ( command.ownerOnly && !  RULES.owners.includes(message.author.id)  ) {
-                return message.reply('Somente donos podem utilizar esse comando!');
+                message.reply('Somente donos podem utilizar esse comando!');
+                return;
             }
             
             if ( command.hasMention &&  message.mentions.users.size < 1 && args.length < 1 ){
-                return message.reply('Parece que você não marcou ninguem e não passou nenhum ID!');
+                message.reply('Parece que você não marcou ninguem e não passou nenhum ID!');
+                return;
             }
                 
             if ( command.hasArgs && ( args.length === 0) ){
-                return message.reply(`está faltando informar algo parça! dá uma olhada usando o comando: \`${this.prefix}help ${command.name}\``);
+                message.reply(`está faltando informar algo parça! dá uma olhada usando o comando: \`${this.prefix}help ${command.name}\``);
+                return;
             }
             
             if ( command.hasMention && command.guildOnly ){
@@ -158,13 +170,15 @@ export class Bot {
                         args[0].replace('<@', '').replace('<', '') 
                         : args[0];
 
-                if ( ! message.guild?.member(userID) ) {
-                    return message.reply(`membro não encontrado no servidor com id: \`${userID}\``);
+                if ( ! await message.guild?.members.fetch(userID) ) {
+                    message.reply(`membro não encontrado no servidor com id: \`${userID}\``);
+                    return;
                 }
             }
             
             if ( command.hasAttachment && (!message.attachments ||message.attachments ) ){
-                return message.reply('não tem nenhum anexo nessa mensagem');
+                message.reply('não tem nenhum anexo nessa mensagem');
+                return;
             }
             
             // TODO implementar filtro de ChannelID para executar comando somente em um certo canal.
@@ -173,7 +187,7 @@ export class Bot {
             if (!this.cooldowns.has(command.name)) {
                 this.cooldowns.set(command.name, new Collection());
             }
-
+            
             const now = Date.now();
             const timestamps : any = this.cooldowns.get(command.name);
             const cooldownAmount = (command.cooldown || 3) * 1000;
@@ -183,7 +197,8 @@ export class Bot {
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
-                    return message.reply(`por favor espere ${timeLeft.toFixed(1)} segundo(s) antes de usar o comando: \`${command.name}\``);
+                    message.reply(`por favor espere ${timeLeft.toFixed(1)} segundo(s) antes de usar o comando: \`${command.name}\``);
+                    return;
                 }
             }
 
@@ -208,7 +223,7 @@ export class Bot {
                 Logger.error(error);
                 this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
-            }*/
+            }
         });
         
     }

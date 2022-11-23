@@ -1,11 +1,11 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageEmbed } from 'discord.js';
 import { Logger } from '../../helpers';
 import bancocentral from '../../services/bancocentral';
 import cotacao from '../../services/cotacao';
 import { Command,CommandParams } from '../../interfaces';
 import bcbsite from '../../services/bancocentralgov';
+import { EmbedBuilder } from '@discordjs/builders';
 
 const command : Command = {
     name: 'cotacao',
@@ -60,19 +60,19 @@ const command : Command = {
             
             
             
-            return message.channel.send(new MessageEmbed({
+            return message.channel.send({embeds: [new EmbedBuilder({
                 title: ':moneybag: Cotaçao banco central do dollar comercial :moneybag:',
                 description: 
                     `• US$ 1,00 : BRL R$ ${(reais).toFixed(3).toString().replace('.',',')} (4% spread)\n
                      • Incluindo +R$ ${iof.toFixed(3).toString().replace('.',',')} (6.38% IOF)\n
                      » Convertendo US$ ${dolares} ( 1 : ${reais.toFixed(3).toString().replace('.',',')} ) sai a R$ ${total_rounded}  :money_with_wings: \n
                     Esse valor é o que será pago se você fizer uma compra em dollar com cartão de credito.`,
-                color: message.guild?.member(message.author.id)?.displayHexColor as string || 0xbd00ff,    
-                timestamp: new Date(),
+                color: (await message.guild?.members.fetch(message.author.id))?.displayColor || 0xbd00ff,    
+                timestamp: new Date().toISOString(),
                 footer: {
                     text: `${process.env.APP_NAME}`
                 }    
-            }));
+            })]});
             
             
         } catch ( err: unknown ) {

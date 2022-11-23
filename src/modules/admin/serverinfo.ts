@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from '@discordjs/builders';
 import { CommandParams, Command } from '../../interfaces';
 
 const command : Command = {
@@ -7,25 +7,25 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     async execute( {message } : CommandParams){
-        return message.channel.send(new MessageEmbed({
+        return message.channel.send({embeds: [new EmbedBuilder({
             title: 'Informações o servidor',
             description: 'Abaixo tem algumas informações do servidor',
             fields: [
                 {
                     name: 'Nome do servidor',
-                    value: message.guild?.name
+                    value: message.guild?.name || ''
                 },
                 {
                     name: 'Total membros',
-                    value: message.guild?.memberCount
+                    value: message.guild?.memberCount.toString() || ''
                 }
             ],
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             footer: {
                 text: `${process.env.APP_NAME}`
             },
-            color: message.guild?.member(message.author.id)?.displayHexColor as string,
-        }));
+            color: (await message.guild?.members.fetch(message.author.id))?.displayColor,
+        })]});
     }
 };
 

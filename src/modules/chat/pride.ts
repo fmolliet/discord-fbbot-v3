@@ -1,4 +1,6 @@
-import { MessageEmbed, MessageAttachment } from 'discord.js';
+
+import { EmbedBuilder } from '@discordjs/builders';
+import { AttachmentBuilder } from 'discord.js';
 import { Command, CommandParams } from '../../interfaces';
 //import getRandomEmoji from '../../utils/getRandomEmoji';
 import downloadAvatar from '../../utils/downloadAvatar';
@@ -42,25 +44,25 @@ const command : Command = {
         const pride : string = prides[String(args![0]).toLowerCase()];
 
         if ( ! pride || !args ){
-            return message.reply(new MessageEmbed({
+            return message.reply({embeds:[new EmbedBuilder({
                 title: ':gay_pride_flag: Lista de bandeiras disponíveis: :gay_pride_flag:',
                 description: Object.keys(prides).map( key => ` • ${key[0].toUpperCase()}${key.slice(1)}`).join('\n'),
                 color: 0xbd00ff
-            }));
+            })]});
         }
         
         message.reply('só um momento, to fazendo aqui!');
         
-        const url = message.author.displayAvatarURL({ format: 'png', size: 2048});
+        const url = message.author.displayAvatarURL({ extension: "png", size: 2048});
         
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` );
         
         const image = await mergeImage(file, `./resources/prideflags/${pride}.png`, message.author.id);
         
-        const attachment = new MessageAttachment(image, `${message.author.id}.png`);
+        const attachment = new AttachmentBuilder(image, { name: `${message.author.id}.png`});
         
-        message.channel.send( attachment);
+        message.channel.send( { files: [attachment]});
         
         return message.channel.send('Finalizado, espero que goste!');
         

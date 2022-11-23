@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Message, MessageAttachment } from 'discord.js';
+import { Message, MessagePayload, AttachmentBuilder } from 'discord.js';
 import { Logger } from '../../helpers';
 import createReport from '../../helpers/reporter';
 import { Command, CommandParams, CreatedReporter, Furmeet } from '../../interfaces';
@@ -25,8 +25,8 @@ const command: Command = {
 
             message.channel.send('Montando backup...');
 
-            await Promise.all(furs!.map((fur: Furmeet) => {
-                const furName = message.guild?.member(fur.userId)?.displayName;
+            await Promise.all(furs!.map(async (fur: Furmeet) => {
+                const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
 
                 if (furName) {
                     //founded.push({...fur, name: furName });
@@ -39,7 +39,14 @@ const command: Command = {
                 Logger.info('Backup executado com sucesso!');
             });
             
-            return (await message.author.createDM()).send('Segue backup dos membros, abraços.', new MessageAttachment(report.filename));
+            return (await message.author.createDM()).send(
+                new MessagePayload(
+                    await message.author.createDM(), { 
+                        content: 'Segue backup dos membros, abraços.',
+                        files: [new AttachmentBuilder(report.filename, { name: 'report'})]
+                    }
+                )
+            );
         }
         return message.reply('Infelizmente, não achei ninguem nesse estado!');
 

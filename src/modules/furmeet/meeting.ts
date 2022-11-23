@@ -29,8 +29,8 @@ const command : Command = {
             
             if ( furs?.length !== 0  ){
                
-                await Promise.all(furs!.map( (fur) => {
-                    const furName = message.guild?.member( fur.userId)?.displayName;
+                await Promise.all(furs!.map( async (fur) => {
+                    const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
                     // Somente irá iterar sobre furros que estão no servidor
                     if ( furName ){
                         founded += `<@${fur.userId}> `;
@@ -40,7 +40,7 @@ const command : Command = {
                 // Todo? Informar mais dados?
                 const mensagem = `Furmeet em **${state} pessoal!**\n${founded}\nOrganizado por: **${organizer}**\nSobre o evento: ${args!.join(' ')}`;
 
-                return message.channel.send(mensagem, {split: true});
+                return message.channel.send(mensagem);
             }
             return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do meet!');  
         }

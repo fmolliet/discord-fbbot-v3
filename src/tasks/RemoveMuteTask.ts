@@ -17,7 +17,7 @@ export async function RemoveMuteTask( client: Client, taskRepository : TaskRepos
         const guild = client.guilds.cache.get(task!.guildId);
         
         if ( guild ){
-            const member = guild?.member(task!.userId!);
+            const member = await guild?.members.fetch(task!.userId!);
             const role = guild?.roles.cache.get(muteRoleId);
             
             if (member && role){
