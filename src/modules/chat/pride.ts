@@ -62,7 +62,7 @@ const command : Command = {
         
         const attachment = new AttachmentBuilder(image, { name: `${message.author.id}.png`});
         
-        message.channel.send( { files: [attachment]});
+        message.channel.send({ files: [attachment]});
         
         return message.channel.send('Finalizado, espero que goste!');
         

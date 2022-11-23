@@ -18,6 +18,7 @@ import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 import TwitterService from './services/TwitterService';
 import { toNamespacedPath } from 'path/posix';
+import { info } from 'console';
 //import { ClientOpts, RedisClient } from 'redis';
 //import {  } from './tasks';
 
@@ -45,7 +46,13 @@ export class Bot {
 
     constructor( config : AppConfig ) {
 
-        this.client = new Client({intents: GatewayIntentBits.GuildMessages});
+        this.client = new Client({intents: [
+            GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildBans,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+        ]});
         this.token = config.token;
         this.prefix = config.prefix;
         this.databaseConfig = config.db;
@@ -70,9 +77,6 @@ export class Bot {
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
             // Alterando a presence
-            this.client.user?.setPresence({
-                
-            })
             this.client.user?.setPresence({
                 activities: [
                     {
@@ -129,7 +133,7 @@ export class Bot {
             if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
                 setTimeout(()=>{
                     message.delete();
-                })
+                }, 1000);
                 message.reply('Esse comando é exclusivo para servidor!');
                 return;
             }
@@ -138,7 +142,7 @@ export class Bot {
                 
                 setTimeout(()=>{
                     message.delete();
-                })
+                }, 1000);
                 message.author.send('Esse comando somente pode ser executado no pv!');
                 return;
             }
@@ -221,6 +225,7 @@ export class Bot {
                 });
             } catch (error) {
                 Logger.error(error);
+                console.log(error)
                 this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }

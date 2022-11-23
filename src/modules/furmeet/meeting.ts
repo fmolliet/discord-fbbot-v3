@@ -30,11 +30,16 @@ const command : Command = {
             if ( furs?.length !== 0  ){
                
                 await Promise.all(furs!.map( async (fur) => {
-                    const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
-                    // Somente irá iterar sobre furros que estão no servidor
-                    if ( furName ){
-                        founded += `<@${fur.userId}> `;
+                    try { 
+                        const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
+                        // Somente irá iterar sobre furros que estão no servidor
+                        if ( furName ){
+                            founded += `<@${fur.userId}> `;
+                        }
+                    } catch (err){
+                        Logger.warn(`Não localizado: ${fur.userId}`);
                     }
+                    
                 }));
                 
                 // Todo? Informar mais dados?

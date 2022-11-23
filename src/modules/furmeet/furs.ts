@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Command, CommandParams } from '../../interfaces';
 import validateState from '../../utils/validateState';
+import { Logger } from '../../helpers';
 
 const command : Command = {
     name: 'fur',
@@ -21,18 +22,24 @@ const command : Command = {
             const furs = await furmeetRepository?.getUsersByState(state);
             
             if ( furs?.length !== 0  ){
-                // TODO: apresentar melhor mensagem ou com variação conforme a quantidade
-                message.reply('Localizei uma galera! Estou preparando aqui a lista ...');
+                message.reply('Vou procurar aqui, um momento')
 
                 await Promise.all(furs!.map( async (fur) => {
-                    const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
-                    
-                    if ( furName ){
-                        founded.push(furName);
+                    try { 
+                        const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
+                        
+                        if ( furName ){
+                            founded.push(furName);
+                        }
+                    } catch (err){
+                        Logger.warn(`Não localizado nesse server: ${fur.userId}`);
                     }
                 }));
                 
-                return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``);
+                if ( founded.length >= 1   ){
+                    message.channel.send('Localizei uma galera! Aqui a lista com os nomes:');
+                    return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``);
+                }
 
             }
             return message.reply('Infelizmente, não achei ninguem nesse estado!');  

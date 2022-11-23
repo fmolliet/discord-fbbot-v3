@@ -26,12 +26,18 @@ const command: Command = {
             message.channel.send('Montando backup...');
 
             await Promise.all(furs!.map(async (fur: Furmeet) => {
-                const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
+                
+                try {
+                    const furName = (await message.guild?.members.fetch({user: fur.userId}))?.displayName;
 
-                if (furName) {
-                    //founded.push({...fur, name: furName });
-                    report.worksheet.addRow({state: fur.state,userId: fur.userId, name: furName }).commit()
+                    if (furName) {
+                        //founded.push({...fur, name: furName });
+                        report.worksheet.addRow({state: fur.state,userId: fur.userId, name: furName }).commit()
+                    }
+                } catch (err){
+                    Logger.warn(`Não localizado nesse server: ${fur.userId}`);
                 }
+                
             }));
             message.reply('Estarei enviando em seu privado o arquivo de backup!');
             
