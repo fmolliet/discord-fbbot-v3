@@ -27,12 +27,13 @@ export async function RemoveMuteTask( client: Client, taskRepository : TaskRepos
     
                     setTimeout( async()=> {
                         member?.roles.remove(role!);
+                        Logger.info(`Deletando task...: ${task!._id}`)
                         await taskRepository?.deleteTask(task!);
                     },  ( (task?.executeOn.getTime() || 1) > now.getTime() ? muteRemainTime : 1) );
                 }
             } catch ( err ){
                 Logger.warn(`Erro ao localizar usuário, na task de remoção de mute: ${task!.userId!}`)
-                Logger.warn(`Deletando task...: ${task!._id}`)
+                Logger.info(`Deletando task...: ${task!._id}`)
                 await taskRepository?.deleteTask(task!);
             }
 
