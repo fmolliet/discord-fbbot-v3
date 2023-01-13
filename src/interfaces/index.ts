@@ -9,3 +9,5 @@ export * from './Setting';
 export * from './Task';
 export * from './Warn';
 export * from './CreatedReporter';
+export * from './ApiResponseException';
+export * from './Violation';
