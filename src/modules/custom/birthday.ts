@@ -9,7 +9,7 @@ import birthdayServices from "../../services/BirthdayService";
 const command: Command = {
   name: "birthday",
   description: "Cadastra seu aniversário para ser marcado no dia!",
-  usage: "[dia] [mes]",
+  usage: "[dia]/[mes]",
   guildOnly: true,
   aliases: ["aniversario", "niver", "bd", "birthdays"],
   hasArgs: true,
