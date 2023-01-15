@@ -2,6 +2,7 @@ import { Attachment, MessagePayload, TextChannel } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { CommandParams, Command } from '../../interfaces';
 import { Logger } from '../../helpers';
+import twitterService from '../../services/TwitterService';
 
 const command : Command = {
     name: 'anuncio',
@@ -9,7 +10,7 @@ const command : Command = {
     usage: '[Anuncio]',
     guildOnly: true,
     adminOnly: true,
-    async execute({ message, client , twitterService} : CommandParams){
+    async execute({ message, client } : CommandParams){
         
         const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : RULES.announceChannel;
         const channel = client?.channels?.cache.get(channelId);
@@ -30,7 +31,7 @@ const command : Command = {
                 (<TextChannel> channel).send(message.content.replace(anuncio, ''));
             }
             try {
-                await twitterService?.tweet(anuncio);
+                await twitterService.tweet(anuncio);
                 return message.reply("Postado no chat de anuncio no twitter com sucesso.");
             } catch ( error: any ){
                 error.response.data.errors.map( (err:any)=>{

@@ -14,5 +14,4 @@ export interface CommandParams {
     furmeetRepository ?: FurmeetRepository
     taskRepository ?: TaskRepository
     warnRepository ?: WarnRepository
-    twitterService ?: TwitterService
 }

@@ -27,4 +27,4 @@ class TwitterService {
     }
 }
 
-export default TwitterService;
+export default new TwitterService();
