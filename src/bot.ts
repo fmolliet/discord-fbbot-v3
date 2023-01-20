@@ -16,6 +16,7 @@ import WarnRepository    from './repositories/WarnRepository';
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
+import SettingRepository from './repositories/SettingRepository';
 
 
 const globPromise = promisify(glob);
@@ -32,6 +33,7 @@ export class Bot {
     private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
     private warnRepository    = new WarnRepository();
+    private settingsRepostory = new SettingRepository();
     
     private _influxService = new InfluxService()    
 
@@ -167,11 +169,9 @@ export class Bot {
             }
             
             if ( command.hasMention && command.guildOnly ){
-                const userID = args[0].includes('<@!') ? 
-                    args[0].replace('<@!', '').replace('>', '')
-                    : args[0].includes('<@') ?
-                        args[0].replace('<@', '').replace('<', '') 
-                        : args[0];
+                const mention = args[0];
+                
+                const userID = mention.replace('<@!', '').replace('>', '').replace('<@', '').replace('<', '');
 
                 if ( ! await message.guild?.members.fetch(userID) ) {
                     message.reply(`membro não encontrado no servidor com id: \`${userID}\``);
@@ -237,7 +237,7 @@ export class Bot {
             return command;
         }
         // Realizei um assert non-Null  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
-        return this.commands.find( cmd  =>  cmd.aliases! && cmd.aliases!.includes(commandName)) as Command;
+        return this.commands.find( cmd  =>  cmd.aliases! && cmd.aliases.includes(commandName)) as Command;
     }
 
     public listen(): Promise<string> {

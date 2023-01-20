@@ -26,7 +26,7 @@ export async function RemoveMuteTask( client: Client, taskRepository : TaskRepos
                     const muteRemainTime = (task?.executeOn.getTime() || 1 ) - now.getTime();
     
                     setTimeout( async()=> {
-                        member?.roles.remove(role!);
+                        member?.roles.remove(role).catch(error =>  Logger.error(`Erro ao tentar remover a role:`, error ));
                         Logger.info(`Deletando task...: ${task!._id}`)
                         await taskRepository?.deleteTask(task!);
                     },  ( (task?.executeOn.getTime() || 1) > now.getTime() ? muteRemainTime : 1) );

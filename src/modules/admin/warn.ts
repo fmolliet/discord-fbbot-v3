@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { EmbedBuilder  } from 'discord.js';
+import { DiscordAPIError, EmbedBuilder  } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
@@ -56,7 +56,7 @@ const command : Command = {
                 member?.roles.add(role).then(()=> message.reply('warn aplicado, o membro foi punido com mute!'))
                     .catch((error: { message: any; })=>{
                         Logger.error(error.message);
-                        message.channel.send('Não consegui adicionar a rolede mute desse cara!');
+                        message.channel.send('Não consegui adicionar a role de mute nele!');
                     });  
                             
                 const task = await taskRepository?.createTask({ guildId: message.guild.id, userId: member?.id, executeOn: removeAt});
