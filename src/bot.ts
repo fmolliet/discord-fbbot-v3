@@ -68,7 +68,7 @@ export class Bot {
         this.client.once('ready', async() => {
             // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
             this.client.guilds.cache.each( async ( guild: Guild, key: string, collection: Collection<string, Guild>) => {
-                if (!this.configuration.whitelistedServers.includes(guild.id)){
+                if (!RULES.whitelistGroups.includes(guild.id)){
                     Logger.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
                     guild.leave();
                 }

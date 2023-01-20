@@ -12,5 +12,4 @@ export interface AppConfig {
       length: number;
     },
     redis?: string,
-    whitelistedServers: string[]
 }
