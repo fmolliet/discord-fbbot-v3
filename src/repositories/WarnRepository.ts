@@ -5,7 +5,7 @@ import { Snowflake } from 'discord.js';
 export default class WarnRepository {
     
     public async getWarnsByUserId( userId: string | Snowflake | undefined ): Promise<Array<Warn|null>> {
-        return await WarnModel.find({
+        return WarnModel.find({
             userId
         });
     }

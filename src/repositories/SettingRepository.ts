@@ -6,7 +6,7 @@ import { Setting } from '../interfaces';
 export default class SettingRepository {
     
     public async getSettingByName( name: string ): Promise<Setting|null> {
-        return await SettingModel.findOne({
+        return SettingModel.findOne({
             name: name,
         });
     }

@@ -4,7 +4,6 @@ import {
     WriteApi,
     Point
 } from '@influxdata/influxdb-client';
-//import { Service } from 'typedi';
 
 //@Service()
 class InfluxService {

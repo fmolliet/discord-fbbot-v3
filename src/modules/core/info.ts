@@ -18,7 +18,11 @@ const command : Command = {
                 },
                 {
                     name: 'Liguagem de programação',
-                    value: 'Typescript'
+                    value: "Typescrypt"
+                },
+                {
+                    name: 'Versão',
+                    value: process.env.npm_package_version || ""
                 }
             ],
             timestamp: new Date().toISOString(),

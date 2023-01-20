@@ -17,5 +17,5 @@ export const config: AppConfig = {
     test: {
         length: 44,
     },
-    redis: process.env.REDIS_URL ||   'redis://127.0.0.1:6379'  
+    redis: process.env.REDIS_URL ||   'redis://127.0.0.1:6379',
 };
