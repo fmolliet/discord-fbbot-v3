@@ -7,7 +7,7 @@ import { Furmeet } from '../interfaces';
 export default class FurmeetRepository {
     
     public async getUserById( userId: Snowflake ): Promise<Furmeet|null> {
-        return await FurmeetModel.findOne({
+        return FurmeetModel.findOne({
             userId: userId,
         });
     }
@@ -17,13 +17,13 @@ export default class FurmeetRepository {
     }
     
     public async getUsersByState( state : string ):  Promise<Array<Furmeet>>{
-        return await FurmeetModel.find({
+        return FurmeetModel.find({
             state: state
         });
     }
     
     public async getAllUsers(): Promise<Array<Furmeet>> {
-        return await FurmeetModel.find();
+        return FurmeetModel.find();
     }
     
     public async updateUserState( _id : Types.ObjectId, state : string ):  Promise<boolean>{

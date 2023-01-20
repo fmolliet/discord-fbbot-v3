@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Client, Message, Collection, ClientEvents, ActivityType, GatewayIntentBits, ChannelType } from 'discord.js';
-import { Command, AppConfig, DatabaseConfig } from './interfaces';
+import {Client, Message, Collection, ActivityType, GatewayIntentBits, ChannelType, Guild } from 'discord.js';
+import { Command, AppConfig } from './interfaces';
 import glob          from 'glob';
 import { promisify } from 'util';
 
@@ -16,10 +16,6 @@ import WarnRepository    from './repositories/WarnRepository';
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
-import { toNamespacedPath } from 'path/posix';
-import { info } from 'console';
-//import { ClientOpts, RedisClient } from 'redis';
-//import {  } from './tasks';
 
 
 const globPromise = promisify(glob);
@@ -27,13 +23,11 @@ const globPromise = promisify(glob);
 export class Bot {
     
     private client: Client;
-    private readonly token: string | undefined;
     private prefix : string;
     
+    private configuration: AppConfig;  
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
-    
-    private databaseConfig: DatabaseConfig;
     
     private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
@@ -50,9 +44,9 @@ export class Bot {
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
         ]});
-        this.token = config.token;
+
         this.prefix = config.prefix;
-        this.databaseConfig = config.db;
+        this.configuration = config;
        
     }
     
@@ -70,6 +64,14 @@ export class Bot {
         // Cheat Sheet de dos eventos: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584#file-discordjs-cheatsheet-js-L141
         
         this.client.once('ready', async() => {
+            // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
+            this.client.guilds.cache.each( async ( guild: Guild, key: string, collection: Collection<string, Guild>) => {
+                if (!this.configuration.whitelistedServers.includes(guild.id)){
+                    Logger.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
+                    guild.leave();
+                }
+            });
+            
             // Mostrando nome e url para adicionar
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
@@ -91,7 +93,7 @@ export class Bot {
             }
             Logger.info('Funcionalidades carregadas.');
             
-            await database.connect( this.databaseConfig ); 
+            await database.connect( this.configuration.db ); 
             await this.setup();
         });
     }
@@ -244,7 +246,7 @@ export class Bot {
         this.handleGuildCreate();
         this.handleReady();
 
-        return this.client.login(this.token);
+        return this.client.login(this.configuration.token);
     }
 
 }
