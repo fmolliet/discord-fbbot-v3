@@ -4,7 +4,6 @@ name: Push Container to Heroku
 on: 
   push:
     branches:
-    - main
     - release/*
 
 jobs:
