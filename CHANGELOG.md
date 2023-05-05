@@ -29,3 +29,13 @@ First Stable version
 - c47b989 - <b>fix:</b> Refatorando modulos de avatar, anuncio de jogos e fur
 - 7b78ea2 - <b>fix:</b> Correção do bot.ts e warn.ts
 - a29c350 - <b>fix:</b> Subindo versão do discord.js
+
+# 1.1.0
+Minor changes With birthday
+
+## Features
+- Comando aniversariantes 
+
+# Patchlog 
+ff60cb6 - <b>feat:</b> criado funcionalidade de aniversariantes do mes em vez do dia.
+bd52a98 - <b>feat:</b>  Criado interface com contrato de retorno da API de aniversariantes + Comando de aniversariantes

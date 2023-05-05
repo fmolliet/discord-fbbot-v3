@@ -99,8 +99,8 @@ const command : Command = {
             
             // Manda mensagem no pv
             
-            
-            member?.send( { embeds: [
+            try {
+                member?.send( { embeds: [
                     {
                         title: `Você recebeu o seu ${warns!.length}º warning! `,
                         color: 0xFF0000,
@@ -114,7 +114,11 @@ const command : Command = {
                         }              
                     }
                 ]
-            });
+                });
+            } catch ( ex ){
+                Logger.error("Erro ao tentar enviar mensagem para o membro...");
+                Logger.error(ex);
+            }
             
             return message.reply(`Enviado warn para o membro \`${member?.displayName}\`!`);
         }
