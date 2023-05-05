@@ -37,5 +37,6 @@ Minor changes With birthday
 - Comando aniversariantes 
 
 # Patchlog 
-ff60cb6 - <b>feat:</b> criado funcionalidade de aniversariantes do mes em vez do dia.
-bd52a98 - <b>feat:</b>  Criado interface com contrato de retorno da API de aniversariantes + Comando de aniversariantes
+ff60cb6 - <b>feat:</b> Criado funcionalidade de aniversariantes do mes em vez do dia.
+bd52a98 - <b>feat:</b> Criado interface com contrato de retorno da API de aniversariantes + Comando de aniversariantes.
+bd814dd - <b>fix:</b> Adicionado Try ao realizar envio da mensagem para o membro.
