@@ -11,3 +11,4 @@ export * from './Warn';
 export * from './CreatedReporter';
 export * from './ApiResponseException';
 export * from './Violation';
+export * from './Birthday';
