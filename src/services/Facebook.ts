@@ -1,4 +1,0 @@
-//@Service()
-class FacebookService {
-    
-}

@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmbedBuilder } from '@discordjs/builders';
-import {  } from 'discord.js';
-import { RULES } from '../../configs/rules';
-import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
 
 const command : Command = {

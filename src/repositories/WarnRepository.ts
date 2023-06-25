@@ -15,6 +15,6 @@ export default class WarnRepository {
     }
     
     public async deleteTask( warn: Warn ): Promise<void> {
-        await WarnModel.deleteOne(warn);
+        WarnModel.deleteOne(warn);
     }
 }

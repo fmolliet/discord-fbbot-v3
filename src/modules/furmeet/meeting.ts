@@ -15,13 +15,11 @@ const command : Command = {
         const organizer =  message.mentions.users.first()?.username || args![1] ;
         
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const about = args!.splice(0, 2);
+        //const about = args!.splice(0, 2);
         
         if(args?.length === 0) {
             return message.channel.send('Nenhuma informação foi dada sobre o meet :/');
         }
-        
-        //Logger.info(args);
 
         if( validateState(state) ){
                 

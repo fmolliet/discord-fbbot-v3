@@ -61,7 +61,7 @@ const command : Command = {
                             
                 const task = await taskRepository?.createTask({ guildId: message.guild.id, userId: member?.id, executeOn: removeAt});
                 
-                setTimeout( async()=> {
+                setTimeout( ()=> {
                     member?.roles.remove(role)
                         .then(async()=>  taskRepository?.deleteTask(task!))
                         .catch((error: { message: any; })=>{

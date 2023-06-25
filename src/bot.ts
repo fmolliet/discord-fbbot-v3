@@ -23,8 +23,8 @@ const globPromise = promisify(glob);
 
 export class Bot {
     
-    private client: Client;
-    private prefix : string;
+    private client:Client;
+    private prefix:string="!";
     
     private configuration: AppConfig;  
     private commands : Collection<string, Command> = new Collection();
@@ -33,7 +33,6 @@ export class Bot {
     private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
     private warnRepository    = new WarnRepository();
-    private settingsRepostory = new SettingRepository();
     
     private _influxService = new InfluxService()    
 
@@ -42,7 +41,7 @@ export class Bot {
         this.client = new Client({intents: [
             GatewayIntentBits.DirectMessages,
             GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildBans,
+            GatewayIntentBits.GuildModeration,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
         ]});
@@ -67,7 +66,7 @@ export class Bot {
         
         this.client.once('ready', async() => {
             // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
-            this.client.guilds.cache.each( async ( guild: Guild, key: string, collection: Collection<string, Guild>) => {
+            this.client.guilds.cache.each( ( guild: Guild, _key: string, _collection: Collection<string, Guild>) => {
                 if (!RULES.whitelistGroups.includes(guild.id)){
                     Logger.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
                     guild.leave();
@@ -193,9 +192,9 @@ export class Bot {
             
             const now = Date.now();
             const timestamps : any = this.cooldowns.get(command.name);
-            const cooldownAmount = (command.cooldown || 3) * 1000;
+            const cooldownAmount = (command.cooldown ?? 3) * 1000;
 
-            if ( timestamps && timestamps.has(message.author.id)) {
+            if ( timestamps.has(message.author.id)) {
                 const expirationTime = timestamps?.get(message.author.id) + cooldownAmount;
 
                 if (now < expirationTime) {

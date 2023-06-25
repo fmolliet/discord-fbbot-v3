@@ -31,7 +31,6 @@ const command: Command = {
                     const furName = (await message.guild?.members.fetch({user: fur.userId}))?.displayName;
 
                     if (furName) {
-                        //founded.push({...fur, name: furName });
                         report.worksheet.addRow({state: fur.state,userId: fur.userId, name: furName }).commit()
                     }
                 } catch (err){

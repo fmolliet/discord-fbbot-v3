@@ -97,7 +97,6 @@ const command : Command = {
             value: `${command.cooldown || 3} segundo(s)`
         });
 
-        //message.channel.send(data, { split: true });
         return message.channel.send({embeds:[messageEmbed]});
     },
 };

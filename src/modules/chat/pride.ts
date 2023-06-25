@@ -2,7 +2,6 @@
 import { EmbedBuilder } from '@discordjs/builders';
 import { AttachmentBuilder } from 'discord.js';
 import { Command, CommandParams } from '../../interfaces';
-//import getRandomEmoji from '../../utils/getRandomEmoji';
 import downloadAvatar from '../../utils/downloadAvatar';
 import mergeImage from '../../utils/mergeImage';
 
@@ -56,7 +55,7 @@ const command : Command = {
         const url = message.author.displayAvatarURL({ extension: "png", size: 2048});
         
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const file = await downloadAvatar(url!, `./temp/${message.author.id}.png` );
+        const file = await downloadAvatar(url, `./temp/${message.author.id}.png` );
         
         const image = await mergeImage(file, `./resources/prideflags/${pride}.png`, message.author.id);
         

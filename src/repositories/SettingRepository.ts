@@ -16,7 +16,7 @@ export default class SettingRepository {
     }
 
     public async updateSettingValue( _id : Types._ObjectId, value : string ):  Promise<boolean>{
-        await SettingModel.updateOne( { _id },{
+        SettingModel.updateOne( { _id },{
             state: value
         });
         return true;

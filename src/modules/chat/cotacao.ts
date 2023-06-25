@@ -1,8 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Logger } from '../../helpers';
-import bancocentral from '../../services/bancocentral';
-import cotacao from '../../services/cotacao';
 import { Command,CommandParams } from '../../interfaces';
 import bcbsite from '../../services/bancocentralgov';
 import { EmbedBuilder } from '@discordjs/builders';
@@ -19,27 +17,15 @@ const command : Command = {
         if (  isNaN(dolares) ) {
             return message.reply('precisa ser um número válido tente: 10, 149,99 , 30!');
         }
-        
-        const today = new Date(Date.now()).getDate();
-        let day = '';
-        
-        if ( today > 0 && today < 6 ){
-            day = dataAtualFormatada();
-        } else if ( today === 6){
-            day = dataAtualFormatada(1);
-        } else {
-            day =  dataAtualFormatada(2);
-        }
 
-        
         try { 
-            //const result = await bancocentral.get(`/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${day}'&$top=1&$format=json&$select=cotacaoVenda`);
+            /**const result = await bancocentral.get(`/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${day}'&$top=1&$format=json&$select=cotacaoVenda`);
             //const json = JSON.parse(JSON.stringify(result.data))
             //const reais : number = json.value[0]['cotacaoVenda'] * 1.04
             
             //const result = await cotacao.get('/USD-BRL,EUR-BRL,BTC-BRL');
             //const reais : number = result.data.USDBRL.high
-            
+            */
             
             const result = await bcbsite.get('/indicadorCambio');
             
@@ -90,6 +76,22 @@ function dataAtualFormatada( subdays = 0 ) : string{
         mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
         ano  = data.getFullYear();
     return mes+'/'+dia+'/'+ano;
+}
+
+function getFormatedDate(){
+    const today = new Date(Date.now()).getDate();
+    switch (today) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            return dataAtualFormatada();
+        case 5:
+            return dataAtualFormatada(1);
+        default:
+            return dataAtualFormatada(2);
+      }
 }
 
 export = command;

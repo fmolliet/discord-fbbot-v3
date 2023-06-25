@@ -13,11 +13,11 @@ const command : Command = {
     async execute({ message, args, setPrefix }: CommandParams){
         // Não da para fazer injeção de dependencia pois nao passa a referencia da classe
         const newPrefix = args![0];
-        if ( newPrefix &&  newPrefix.length > 0 && newPrefix.match(/(\!|\+|\$|\.|\-)/)){
-            setPrefix!(newPrefix || '!');
+        if ( newPrefix &&  newPrefix.length > 0 && RegExp(/(!|\$|\.|-)/).exec(newPrefix)){
+            setPrefix!(newPrefix);
             return message.reply(`Prefixo alterado para ${newPrefix}`);
         }
-        return message.reply('prefixo inválido, tente entre: `!`, `+`, `$`, `.`, `-`!');
+        return message.reply('prefixo inválido, tente entre: `!`, `$`, `.`, `-`!');
 
     }
 };

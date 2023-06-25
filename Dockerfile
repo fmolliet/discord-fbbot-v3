@@ -1,7 +1,7 @@
 #############
 ##  BUILD  ##
 #############
-FROM node:16-alpine as BUILD
+FROM node:16-alpine AS BUILD
 WORKDIR /app
 COPY . .
 RUN ["npm", "install"]

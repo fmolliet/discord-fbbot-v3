@@ -29,7 +29,7 @@ const command: Command = {
 
     const mentionedUser = message.mentions.users.first();
     const url = mentionedUser?.avatarURL({ extension: "png", size: 2048 });
-    const userId = mentionedUser?.id || "";
+    const userId = mentionedUser?.id ?? "";
 
     if (message.channel.type !== ChannelType.DM) {
       return message.reply({
