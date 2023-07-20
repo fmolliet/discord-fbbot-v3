@@ -33,6 +33,7 @@ const command : Command = {
                         }
                     } catch (err){
                         Logger.warn(`Não localizado nesse server: ${fur.userId}`);
+                        furmeetRepository?.deleteBySnowflake(fur.userId);
                     }
                 }));
                 
