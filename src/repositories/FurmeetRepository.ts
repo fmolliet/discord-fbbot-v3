@@ -33,7 +33,7 @@ export default class FurmeetRepository {
         return true;
     }
     
-    public async deleteTask( snowflake: Snowflake ): Promise<void> {
+    public async deleteBySnowflake( snowflake: Snowflake ): Promise<void> {
         FurmeetModel.deleteOne({snowflake}); 
     }
     
