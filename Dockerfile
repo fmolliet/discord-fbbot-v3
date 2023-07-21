@@ -13,6 +13,7 @@ RUN ["npm", "run", "build"]
 #############
 FROM node:16-alpine
 WORKDIR /app
+COPY --from=BUILD /app/src/modules /app/src/modules
 COPY --from=BUILD /app/dist /app/dist
 COPY --from=BUILD /app/temp /app/temp
 COPY --from=BUILD /app/node_modules /app/node_modules

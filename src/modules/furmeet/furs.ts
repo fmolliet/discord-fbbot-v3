@@ -32,8 +32,8 @@ const command : Command = {
                             founded.push(furName);
                         }
                     } catch (err){
-                        Logger.warn(`Não localizado nesse server: ${fur.userId}`);
-                        furmeetRepository?.deleteBySnowflake(fur.userId);
+                        Logger.warn(`Não localizado nesse server: ${fur.userId}, desativando.`);
+                        //await furmeetRepository?.deactive(fur);
                     }
                 }));
                 

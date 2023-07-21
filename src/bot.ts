@@ -17,6 +17,7 @@ import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 import SettingRepository from './repositories/SettingRepository';
+import { loggers } from 'winston';
 
 
 const globPromise = promisify(glob);
@@ -88,37 +89,51 @@ export class Bot {
             // Load Recursive files
             const files = await globPromise('src/modules/**/*.ts');
             
+            if (files.length < 1){
+                Logger.error("Nenhuma funcionalidade encontrada.");
+                throw new Error("No module found");
+            }
+            
             for await (const file of files) {
                 const command = await import(file.replace('src/','./').replace('.ts','')) as Command;
                 this.commands.set(command.name, command);
             }
-            Logger.info('Funcionalidades carregadas.');
+            
+            Logger.info(`${files.length} módulos de comandos carregados.`);
             
             await database.connect( this.configuration.db ); 
             await this.setup();
         });
     }
     
-    private handleGuildCreate() : void {
+    /**  private handleGuildCreate() : void {
         
-        this.client.on('guildCreate', function(guild){
-            if ( RULES.whitelistGroups.includes(guild.id) ) {
+         this.client.on('guildCreate', function(guild){
+             if ( RULES.whitelistGroups.includes(guild.id) ) {
                 return;
-            }
-            Logger.info(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
-            guild.leave();
+             }
+             Logger.info(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
+             guild.leave();
+         });
+     }*/
+    private handleErrors(): void {
+        this.client.on("error", ( error)=>{
+            Logger.error("EVENT HANDLER: " +error.message, error.stack);
+            throw new Error(error.message);
         });
     }
+    
     
     private handleMessage() : void {
         this.client.on('messageCreate', async (message: Message) => {
 
-            
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
                 || message.webhookId ) {
                 return;
             }
+            
+            Logger.info("Mensagem recebida: "+ message.content);
             
             const args : Array<string> = message.content.slice(this.prefix.length).split(/ +/);
             
@@ -126,9 +141,10 @@ export class Bot {
             const command = this.getCommand(commandName);
             
             if (!command) {
+                Logger.error("Comando não encontrado!");
                 return;
             }
-            
+            Logger.info("Comando a se executado: "+ command.name.toUpperCase());
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
                 setTimeout(()=>{
@@ -242,7 +258,8 @@ export class Bot {
     public listen(): Promise<string> {
         
         this.handleMessage();
-        this.handleGuildCreate();
+        //this.handleGuildCreate();
+        this.handleErrors();
         this.handleReady();
 
         return this.client.login(this.configuration.token);

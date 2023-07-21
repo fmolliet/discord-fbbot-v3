@@ -27,7 +27,8 @@ const command : Command = {
             
             await furmeetRepository?.createUser({
                 userId: message.author.id,
-                state: state
+                state: state,
+                active: true
             });
             
             return message.reply('cadastrei aqui seu estado! ... ');
