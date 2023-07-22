@@ -16,8 +16,6 @@ import WarnRepository    from './repositories/WarnRepository';
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
-import SettingRepository from './repositories/SettingRepository';
-
 
 const globPromise = promisify(glob);
 
@@ -105,16 +103,6 @@ export class Bot {
         });
     }
     
-    /**  private handleGuildCreate() : void {
-        
-         this.client.on('guildCreate', function(guild){
-             if ( RULES.whitelistGroups.includes(guild.id) ) {
-                return;
-             }
-             Logger.info(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
-             guild.leave();
-         });
-     }*/
     private handleErrors(): void {
         this.client.on("error", ( error)=>{
             Logger.error("EVENT HANDLER: " +error.message, error.stack);
@@ -136,7 +124,7 @@ export class Bot {
             
             const args : Array<string> = message.content.slice(this.prefix.length).split(/ +/);
             
-            const commandName = args.shift()?.toLowerCase() || '';    
+            const commandName = args.shift()?.toLowerCase() ?? '';    
             const command = this.getCommand(commandName);
             
             if (!command) {
@@ -257,7 +245,6 @@ export class Bot {
     public listen(): Promise<string> {
         
         this.handleMessage();
-        //this.handleGuildCreate();
         this.handleErrors();
         this.handleReady();
 

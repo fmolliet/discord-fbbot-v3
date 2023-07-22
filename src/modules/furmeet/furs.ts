@@ -30,12 +30,12 @@ const command : Command = {
                         const cached_name = await cacheRepository.get(fur.userId);
                         
                         if ( cached_name){
-                            if ( cached_name != "N/A")
-                                founded.push(cached_name);
+                            founded.push(cached_name);
                         } else {
                             const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
                             
                             if ( furName ){
+                                furmeetRepository!.setUserActive(fur._id!);
                                 cacheRepository.insert(fur.userId, furName)
                                 founded.push(furName);
                             } 
@@ -43,8 +43,7 @@ const command : Command = {
 
                     } catch (err){
                         Logger.error(`Error para snowflake ${fur.userId}: ${err}.`);
-                        //await furmeetRepository?.deactive(fur);
-                        cacheRepository.insert(fur.userId, "N/A")
+                        await furmeetRepository?.deactive(fur._id!);
                     }
                 }));
                 

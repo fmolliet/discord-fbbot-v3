@@ -1,9 +1,8 @@
-import { Types, UpdateWriteOpResult } from 'mongoose';
+import { Types } from 'mongoose';
 import { Snowflake } from 'discord.js';
 
 import FurmeetModel from '../models/Furmeets';
 import { Furmeet } from '../interfaces';
-import {ObjectID} from 'mongodb';
 
 export default class FurmeetRepository {
     
@@ -24,23 +23,31 @@ export default class FurmeetRepository {
     }
     
     public async getAllUsers(): Promise<Array<Furmeet>> {
-        return FurmeetModel.find({ active: true});
+        return FurmeetModel.find();
+    }
+    
+    public async setUserActive( _id : Types.ObjectId ):  Promise<boolean>{
+        await FurmeetModel.updateOne( { _id },{
+            active: true
+        });
+        return true;
     }
     
     public async updateUserState( _id : Types.ObjectId, state : string ):  Promise<boolean>{
-        FurmeetModel.updateOne( { _id },{
+        await FurmeetModel.updateOne( { _id },{
             state: state,
             active: true
         });
         return true;
     }
     
-    public async deactive(  user: Furmeet ): Promise<void> {
+    public async deactive(  _id: Types.ObjectId ): Promise<void> {
         // Deleção fisica
-        //FurmeetModel.deleteOne(user); 
+        //FurmeetModel.deleteOne(   user); 
         // Deleção lógica
-        //user.active = false;
-        //await FurmeetModel.create(user); 
+        await FurmeetModel.updateOne( { _id },{
+            active: false
+        });
     }
     
     public deleteBySnowflake( snowflake: Snowflake ): void {

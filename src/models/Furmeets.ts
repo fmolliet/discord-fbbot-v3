@@ -15,6 +15,10 @@ const FurmeetSchema : Schema = new Schema({
     city: {
         type: String,
         required: false,
+    },
+    active: {
+        type: Boolean,
+        required: false
     }   
 },{
     timestamps: false,
