@@ -22,6 +22,7 @@
     "exceljs": "^4.3.0",
     "images": "^3.2.3",
     "inversify": "^6.0.1",
+    "ioredis": "^5.3.2",
     "is-image": "^3.0.0",
     "mongoose": "^5.12.10",
     "oauth": "^0.9.15",

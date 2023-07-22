@@ -2,6 +2,7 @@
 import { Command, CommandParams } from '../../interfaces';
 import validateState from '../../utils/validateState';
 import { Logger } from '../../helpers';
+import cacheRepository from '../../repositories/CacheRepository';
 
 const command : Command = {
     name: 'fur',
@@ -26,14 +27,24 @@ const command : Command = {
 
                 await Promise.all(furs!.map( async (fur) => {
                     try { 
-                        const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
+                        const cached_name = await cacheRepository.get(fur.userId);
                         
-                        if ( furName ){
-                            founded.push(furName);
+                        if ( cached_name){
+                            if ( cached_name != "N/A")
+                                founded.push(cached_name);
+                        } else {
+                            const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
+                            
+                            if ( furName ){
+                                cacheRepository.insert(fur.userId, furName)
+                                founded.push(furName);
+                            } 
                         }
+
                     } catch (err){
-                        Logger.warn(`Não localizado nesse server: ${fur.userId}, desativando.`);
+                        Logger.error(`Error para snowflake ${fur.userId}: ${err}.`);
                         //await furmeetRepository?.deactive(fur);
+                        cacheRepository.insert(fur.userId, "N/A")
                     }
                 }));
                 

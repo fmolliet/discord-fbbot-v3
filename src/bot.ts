@@ -17,7 +17,6 @@ import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 import SettingRepository from './repositories/SettingRepository';
-import { loggers } from 'winston';
 
 
 const globPromise = promisify(glob);
