@@ -32,10 +32,10 @@ const command : Command = {
                         if ( cached_name){
                             founded.push(cached_name);
                         } else {
+                            // Irá buscar o nome do usuário pela api do discord
                             const furName = (await message.guild?.members.fetch(fur.userId))?.displayName;
                             
                             if ( furName ){
-                                furmeetRepository!.setUserActive(fur._id!);
                                 cacheRepository.insert(fur.userId, furName)
                                 founded.push(furName);
                             } 

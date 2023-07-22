@@ -21,7 +21,7 @@ const command : Command = {
             if ( furro &&  furro.state === state ){
                 return message.reply('você já está cadastrado nesse estado!');
             } else if( furro ) {
-                await furmeetRepository?.updateUserState(furro._id!, state);
+                await furmeetRepository?.updateUserState(furro._id!, state.toUpperCase());
                 return message.reply('eu acabei de atualizar seu estado!');
             }
             

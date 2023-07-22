@@ -18,19 +18,13 @@ export default class FurmeetRepository {
     
     public async getUsersByState( state : string ):  Promise<Array<Furmeet>>{
         return FurmeetModel.find({
-            state: state
+            state: state,
+            active: true
         });
     }
     
     public async getAllUsers(): Promise<Array<Furmeet>> {
-        return FurmeetModel.find();
-    }
-    
-    public async setUserActive( _id : Types.ObjectId ):  Promise<boolean>{
-        await FurmeetModel.updateOne( { _id },{
-            active: true
-        });
-        return true;
+        return FurmeetModel.find({active: true});
     }
     
     public async updateUserState( _id : Types.ObjectId, state : string ):  Promise<boolean>{

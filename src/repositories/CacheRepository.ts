@@ -1,13 +1,13 @@
 import Redis from "ioredis";
 import { Logger } from "../helpers";
-
+const PREFIX: string = "fbbot:furmeet:username:";
 class CacheRepository {
     
     private redis: Redis;
     
-    private env: string= process.env.ENVIRONMENT!+":";
-    private DEFAULT_PREFIX: string = "fbbot:furmeet:username:";
-    private DEFAULT_CACHE_EXPIRATION: number = 86400;
+    private env: string= process.env.ENVIRONMENT!+":"; // dev / hml / prod
+    
+    private DEFAULT_CACHE_EXPIRATION: number = 86400; // Um dia em segundos
     
     constructor(){
         this.redis = new Redis(process.env.REDIS_URL!);
@@ -15,11 +15,11 @@ class CacheRepository {
     }
     
     async insert(key:string, value: string) {
-        this.redis.setex(`${this.DEFAULT_PREFIX}${this.env}${key}`,this.DEFAULT_CACHE_EXPIRATION, value);
+        this.redis.setex(`${PREFIX}${this.env}${key}`,this.DEFAULT_CACHE_EXPIRATION, value);
     }
     
     async get(key:string) {
-        return this.redis.get(`${this.DEFAULT_PREFIX}${this.env}${key}`);
+        return this.redis.get(`${PREFIX}${this.env}${key}`);
     }
 }
 
