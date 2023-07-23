@@ -52,7 +52,7 @@ async function fillReport(message: Message, report: CreatedReporter, furs: any[]
                 report.worksheet.addRow({state: fur.state,userId: fur.snowflake, name: furName }).commit()
             }
         } catch (err){
-            Logger.warn(`Não localizado nesse server: ${fur.userId}`);
+            Logger.warn(`Não localizado nesse server: ${fur.snowflake}`);
             try {
                 await meetingService.deactive(fur.snowflake);
             } catch ( ex: unknown | AxiosError){

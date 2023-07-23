@@ -28,7 +28,7 @@ class CacheRepository {
     
         if (!cachedName) {
             const furMember = await message.guild?.members.fetch(snowflake);
-            const furName = furMember?.displayName;
+            const furName = furMember?.user.username;
     
             if (furName) {
                 this.insert(snowflake, furName);
