@@ -32,7 +32,6 @@ const command : Command = {
         }
        
         const founded = await getFurMentions(message, furs);
-        
         if (founded.length >= 1) {
             const mensagem = `Furmeet em **${state} pessoal!**\n${founded}\nOrganizado por: **${organizer}**\nSobre o evento: ${args!.join(' ')}`;
             return message.channel.send(mensagem);
