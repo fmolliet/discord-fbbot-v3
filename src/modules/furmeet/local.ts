@@ -33,6 +33,7 @@ async function updateMeetingState(message: Message, data: any, state: string) {
   } else if (data) {
     Logger.info("Usuário localizado, alterando estado para: " + data.name + " " + data.snowflake);
     await meetingService.put(`/meeting`, {
+      name: message.author.username,
       snowflake: data.snowflake,
       state
     });

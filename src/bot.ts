@@ -17,6 +17,8 @@ import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 
+import { performance } from 'perf_hooks';
+
 const globPromise = promisify(glob);
 
 export class Bot {
@@ -113,6 +115,7 @@ export class Bot {
     
     private handleMessage() : void {
         this.client.on('messageCreate', async (message: Message) => {
+            const startTime = performance.now();
 
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
@@ -229,6 +232,8 @@ export class Bot {
                 this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }
+            const endTime = performance.now();
+            Logger.info(`Execution time: ${(endTime - startTime).toFixed(3)} ms`)
         });
         
     }

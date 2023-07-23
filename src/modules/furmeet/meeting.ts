@@ -19,7 +19,7 @@ const command : Command = {
             return message.reply(`Estado Inválido: '${args![0]}' tente outro!`);
         }
         
-        const organizer =  message.mentions.users.first()?.username || args![1] ;
+        const organizer =  message.mentions.users.first()?.username ?? args![1] ;
 
         if(args?.length === 0) {
             return message.channel.send('Nenhuma informação foi dada sobre o meet :/');
