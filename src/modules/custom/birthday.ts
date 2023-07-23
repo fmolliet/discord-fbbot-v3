@@ -1,8 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { Message } from "discord.js";
 import { Logger } from "../../helpers";
-import { Command, CommandParams } from "../../interfaces";
-import { ApiResponseException, Violation } from "../../interfaces";
+import { Command, CommandParams, ApiResponseException, Violation  } from "../../interfaces";
 
 import birthdayServices from "../../services/BirthdayService";
 

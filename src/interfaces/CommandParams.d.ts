@@ -11,7 +11,6 @@ export interface CommandParams {
     commands?: Collection<string, Command>
     client ?: Client
     setPrefix ?: (prefix:string) => void
-    furmeetRepository ?: FurmeetRepository
     taskRepository ?: TaskRepository
     warnRepository ?: WarnRepository
 }

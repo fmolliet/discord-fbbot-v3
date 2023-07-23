@@ -21,7 +21,7 @@ const command : Command = {
             if ( message.attachments ){
                 const anexos : Attachment[] = [];
                 
-                for await ( const [snowflake, attachment] of message.attachments){
+                for await ( const [_snowflake, attachment] of message.attachments){
                     anexos.push(attachment);
                 }
 

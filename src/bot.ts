@@ -9,31 +9,28 @@ import { promisify } from 'util';
 import { RULES }   from './configs/rules';
 import database    from './database/connect';
 
-import FurmeetRepository from './repositories/FurmeetRepository';
 import TaskRepository    from './repositories/TaskRepository';
 import WarnRepository    from './repositories/WarnRepository';
 
 import { Logger } from './helpers';
 import { RemoveMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
-import SettingRepository from './repositories/SettingRepository';
 
+import { performance } from 'perf_hooks';
 
 const globPromise = promisify(glob);
 
 export class Bot {
     
-    private client: Client;
-    private prefix : string;
+    private client:Client;
+    private prefix:string="!";
     
     private configuration: AppConfig;  
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
     
-    private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
     private warnRepository    = new WarnRepository();
-    private settingsRepostory = new SettingRepository();
     
     private _influxService = new InfluxService()    
 
@@ -42,7 +39,7 @@ export class Bot {
         this.client = new Client({intents: [
             GatewayIntentBits.DirectMessages,
             GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildBans,
+            GatewayIntentBits.GuildModeration,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
         ]});
@@ -67,7 +64,7 @@ export class Bot {
         
         this.client.once('ready', async() => {
             // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
-            this.client.guilds.cache.each( async ( guild: Guild, key: string, collection: Collection<string, Guild>) => {
+            this.client.guilds.cache.each( ( guild: Guild, _key: string, _collection: Collection<string, Guild>) => {
                 if (!RULES.whitelistGroups.includes(guild.id)){
                     Logger.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
                     guild.leave();
@@ -75,6 +72,7 @@ export class Bot {
             });
             
             // Mostrando nome e url para adicionar
+            Logger.info(`BOT: ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
             // Alterando a presence
@@ -89,47 +87,52 @@ export class Bot {
             // Load Recursive files
             const files = await globPromise('src/modules/**/*.ts');
             
+            if (files.length < 1){
+                Logger.error("Nenhuma funcionalidade encontrada.");
+                throw new Error("No module found");
+            }
+            
             for await (const file of files) {
                 const command = await import(file.replace('src/','./').replace('.ts','')) as Command;
                 this.commands.set(command.name, command);
             }
-            Logger.info('Funcionalidades carregadas.');
+            
+            Logger.info(`${files.length} módulos de comandos carregados.`);
             
             await database.connect( this.configuration.db ); 
             await this.setup();
         });
     }
     
-    private handleGuildCreate() : void {
-        
-        this.client.on('guildCreate', function(guild){
-            if ( RULES.whitelistGroups.includes(guild.id) ) {
-                return;
-            }
-            Logger.info(`Tentativa de adicionar o bot ao servidor: ${guild.name} - ${guild.id}`);
-            guild.leave();
+    private handleErrors(): void {
+        this.client.on("error", ( error)=>{
+            Logger.error("EVENT HANDLER: " +error.message, error.stack);
+            throw new Error(error.message);
         });
     }
     
+    
     private handleMessage() : void {
         this.client.on('messageCreate', async (message: Message) => {
+            const startTime = performance.now();
 
-            
             if (!message.content.startsWith(this.prefix) 
                 || message.author.bot  
                 || message.webhookId ) {
                 return;
             }
             
+            Logger.info("Mensagem recebida: "+ message.content);
             const args : Array<string> = message.content.slice(this.prefix.length).split(/ +/);
             
-            const commandName = args.shift()?.toLowerCase() || '';    
+            const commandName = args.shift()!.toLowerCase();    
             const command = this.getCommand(commandName);
             
             if (!command) {
+                Logger.error("Comando não encontrado!");
                 return;
             }
-            
+            Logger.info("Comando a se executado: "+ command.name.toUpperCase());
             // verifica se são comandos de servidor somente
             if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
                 setTimeout(()=>{
@@ -140,7 +143,6 @@ export class Bot {
             }
             
             if ( command.privateOnly && message.channel.type !== ChannelType.DM ) {
-                
                 setTimeout(()=>{
                     message.delete();
                 }, 1000);
@@ -193,9 +195,9 @@ export class Bot {
             
             const now = Date.now();
             const timestamps : any = this.cooldowns.get(command.name);
-            const cooldownAmount = (command.cooldown || 3) * 1000;
+            const cooldownAmount = (command.cooldown ?? 3) * 1000;
 
-            if ( timestamps && timestamps.has(message.author.id)) {
+            if ( timestamps.has(message.author.id)) {
                 const expirationTime = timestamps?.get(message.author.id) + cooldownAmount;
 
                 if (now < expirationTime) {
@@ -217,7 +219,6 @@ export class Bot {
                     commands: this.commands,
                     client: this.client,
                     setPrefix: this.setPrefix,
-                    furmeetRepository: this.furmeetRepository,
                     taskRepository: this.taskRepository,
                     warnRepository: this.warnRepository
                 });
@@ -227,6 +228,8 @@ export class Bot {
                 this._influxService.write('execution', 'error');
                 message.reply('Ocorreu um erro na execução do comando, entre em contato com o dev!');
             }
+            const endTime = performance.now();
+            Logger.info(`Execution time: ${(endTime - startTime).toFixed(3)} ms`)
         });
         
     }
@@ -241,12 +244,9 @@ export class Bot {
     }
 
     public listen(): Promise<string> {
-        
         this.handleMessage();
-        this.handleGuildCreate();
+        this.handleErrors();
         this.handleReady();
-
         return this.client.login(this.configuration.token);
     }
-
 }

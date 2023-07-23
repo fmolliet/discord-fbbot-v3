@@ -1,4 +1,4 @@
-# 1.0.0
+# [1.0.0] - 2023-01-19
 O changelog começa com a versão 1.0.0 como a primeira versão estável. A partir dessa versão, foram adicionadas várias funcionalidades, como gerenciamento de aniversários, postagem no Twitter, conversão de dinheiro, gerenciamento de reuniões, tarefas, ícone de orgulho, anúncios e um sistema de aviso. Houve várias correções de bugs e melhorias no código em versões posteriores, incluindo refatorações, melhorias de log, correções de permissões, correções de busca e migração de funcionalidades para anexos e incorporações de mensagens. Houve também uma correção na versão do Discord.js.
 ## Features
 - Birthday
@@ -30,7 +30,7 @@ O changelog começa com a versão 1.0.0 como a primeira versão estável. A part
 - 7b78ea2 - <b>fix:</b> Correção do bot.ts e warn.ts
 - a29c350 - <b>fix:</b> Subindo versão do discord.js
 
-# 1.1.0
+# [1.1.0] - 2023-05-14
 Versão 1.1.0 com mudanças menores relacionadas ao recurso de aniversários, incluindo um novo comando para mostrar os aniversariantes do mês e uma interface para o contrato de retorno da API de aniversários. Além disso, foi adicionado um Try para enviar mensagens aos membros.
 
 ## Features
@@ -40,3 +40,13 @@ Versão 1.1.0 com mudanças menores relacionadas ao recurso de aniversários, in
 ff60cb6 - <b>feat:</b> Criado funcionalidade de aniversariantes do mes em vez do dia.
 bd52a98 - <b>feat:</b> Criado interface com contrato de retorno da API de aniversariantes + Comando de aniversariantes.
 bd814dd - <b>fix:</b> Adicionado Try ao realizar envio da mensagem para o membro.
+
+# [1.2.0] - 2023-07-23
+Versão 1.2.0 adiciona diversas simplificações, cache para o nome dos usuários de furmeets, segregação da funcionalidade furmeet em um microserviço.
+
+## Features
+- Adicionado CacheRepository com uso de DragonflyDB
+- Removido repository de Furmeet
+- Adicionado chamadas ao meeting-service (microserviço)
+
+## Patchlog 
