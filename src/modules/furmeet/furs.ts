@@ -6,6 +6,7 @@ import isValidState from '../../utils/validateState';
 
 import meetingService from "../../services/MeetingService";
 import { Message } from 'discord.js';
+import axios, { AxiosError } from 'axios';
 
 const command : Command = {
     name: 'fur',
@@ -49,7 +50,14 @@ async function getFurNames(message: Message, furs: any[]) {
             }
         } catch (err) {
             Logger.error(`Error para snowflake ${fur.snowflake}: ${err}.`);
-            meetingService.deactive(fur.snowflake);
+            try {
+                await meetingService.deactive(fur.snowflake);
+            } catch ( ex: unknown | AxiosError){
+                if (axios.isAxiosError(ex)){
+                    Logger.error(`Erro ao tentar desativar: ${ex.message}`)
+                }
+            }
+            
         }
     });
     await Promise.all(promises);

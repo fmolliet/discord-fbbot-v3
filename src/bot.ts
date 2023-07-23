@@ -72,7 +72,7 @@ export class Bot {
             });
             
             // Mostrando nome e url para adicionar
-            Logger.info(`Inicializando bot ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
+            Logger.info(`BOT: ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
             Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
             Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
             // Alterando a presence

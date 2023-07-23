@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import axios, { AxiosError } from 'axios';
 import { Message, MessagePayload, AttachmentBuilder } from 'discord.js';
 import { Logger } from '../../helpers';
 import createReport from '../../helpers/reporter';
 import { Command, CommandParams, CreatedReporter } from '../../interfaces';
-import { ReportUser } from '../../interfaces/ReportUser';
 
 import cacheRepository from '../../repositories/CacheRepository';
 import meetingService from "../../services/MeetingService";
@@ -53,7 +53,13 @@ async function fillReport(message: Message, report: CreatedReporter, furs: any[]
             }
         } catch (err){
             Logger.warn(`Não localizado nesse server: ${fur.userId}`);
-            await meetingService.deactive(fur.snowflake);
+            try {
+                await meetingService.deactive(fur.snowflake);
+            } catch ( ex: unknown | AxiosError){
+                if (axios.isAxiosError(ex)){
+                    Logger.error(`Erro ao tentar desativar: ${ex.message}`)
+                }
+            }
         }
     });
     await Promise.all(promises);
