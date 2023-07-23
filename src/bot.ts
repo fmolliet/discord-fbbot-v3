@@ -9,7 +9,6 @@ import { promisify } from 'util';
 import { RULES }   from './configs/rules';
 import database    from './database/connect';
 
-import FurmeetRepository from './repositories/FurmeetRepository';
 import TaskRepository    from './repositories/TaskRepository';
 import WarnRepository    from './repositories/WarnRepository';
 
@@ -30,7 +29,6 @@ export class Bot {
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
     
-    private furmeetRepository = new FurmeetRepository();
     private taskRepository    = new TaskRepository();
     private warnRepository    = new WarnRepository();
     
@@ -124,10 +122,9 @@ export class Bot {
             }
             
             Logger.info("Mensagem recebida: "+ message.content);
-            
             const args : Array<string> = message.content.slice(this.prefix.length).split(/ +/);
             
-            const commandName = args.shift()?.toLowerCase() ?? '';    
+            const commandName = args.shift()!.toLowerCase();    
             const command = this.getCommand(commandName);
             
             if (!command) {
@@ -145,7 +142,6 @@ export class Bot {
             }
             
             if ( command.privateOnly && message.channel.type !== ChannelType.DM ) {
-                
                 setTimeout(()=>{
                     message.delete();
                 }, 1000);
@@ -222,7 +218,6 @@ export class Bot {
                     commands: this.commands,
                     client: this.client,
                     setPrefix: this.setPrefix,
-                    furmeetRepository: this.furmeetRepository,
                     taskRepository: this.taskRepository,
                     warnRepository: this.warnRepository
                 });
@@ -248,12 +243,9 @@ export class Bot {
     }
 
     public listen(): Promise<string> {
-        
         this.handleMessage();
         this.handleErrors();
         this.handleReady();
-
         return this.client.login(this.configuration.token);
     }
-
 }

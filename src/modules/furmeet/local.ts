@@ -17,7 +17,7 @@ const command : Command = {
     async execute( { message, args } : CommandParams){
         const state = args![0].toUpperCase();
         if( isValidState(state) ){
-            const { data } = await meetingService.get(`/meeting/${message.author.id}`)
+            const data = await meetingService.getBySnowflake(message.author.id);
             return await updateMeetingState(message, data, state);
         }
         return message.reply(`Estado Inválido: \`' + ${args![0]} + '\` tente outro!'`);
@@ -29,15 +29,11 @@ const command : Command = {
 async function updateMeetingState(message: Message, data: any, state: string) {
   if (data && data.state === state) {
     Logger.info("Usuário localizado, mesmo estado para: " + data.name + " " + data.snowflake);
-    return message.reply('você já está cadastrado nesse estado!');
+    return message.reply('Você já está cadastrado nesse estado!');
   } else if (data) {
     Logger.info("Usuário localizado, alterando estado para: " + data.name + " " + data.snowflake);
-    await meetingService.put(`/meeting`, {
-      name: message.author.username,
-      snowflake: data.snowflake,
-      state
-    });
-    return message.reply('eu acabei de atualizar seu estado!');
+    await meetingService.update(message.author.username, data.snowflake, state);
+    return message.reply('Eu acabei de atualizar seu cadastro no Furmeet!');
   }
 
   await createMeetingRecord(message, state);
@@ -45,14 +41,9 @@ async function updateMeetingState(message: Message, data: any, state: string) {
 
 // Função para criar um novo registro de reunião para o usuário
 async function createMeetingRecord(message: Message, state: string) {
-  await meetingService.post(`/meeting`, {
-    name: message.author.username,
-    snowflake: message.author.id,
-    state,
-    active: true
-  });
+  await meetingService.create(message.author.username, message.author.id,state);
 
-  return message.reply('cadastrei aqui seu estado!');
+  return message.reply('Cadastrei você no Furmeet!');
 }
 
 export = command;

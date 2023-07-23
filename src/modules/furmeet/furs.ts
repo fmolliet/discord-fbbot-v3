@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Command, CommandParams } from '../../interfaces';
-import validateState from '../../utils/validateState';
 import { Logger } from '../../helpers';
 import cacheRepository from '../../repositories/CacheRepository';
+import isValidState from '../../utils/validateState';
 
 import meetingService from "../../services/MeetingService";
 import { Message } from 'discord.js';
@@ -19,14 +19,14 @@ const command : Command = {
     async execute( { message, args } : CommandParams) {
         const state = args![0]?.toUpperCase();
 
-        if (!validateState(state)) {
-            return message.reply(`Estado Inválido: '${args![0]}' tente outro!`);
+        if (!isValidState(state)) {
+            return message.reply(`Estado inválido: '${args![0]}'!`);
         }
 
-        const furs = await getFursByState(state);
+        const furs = await meetingService.getFursByState(state);
 
         if (furs.length === 0) {
-            return message.reply('Infelizmente, não achei ninguém nesse estado!');
+            return message.reply('Infelizmente não achei ninguém nesse estado!');
         }
 
         const founded = await getFurNames(message, furs);
@@ -39,34 +39,19 @@ const command : Command = {
     }
 };
 
-async function getFursByState(state: string) {
-    const { data } = await meetingService.get(`/meeting/state/${state}`);
-    return data.content || [];
-}
-
 async function getFurNames(message: Message, furs: any[]) {
     const founded: string[] = [];
     const promises = furs.map(async (fur: any) => {
         try {
-            const cachedName = await cacheRepository.get(fur.snowflake);
-
-            if (cachedName) {
-                founded.push(cachedName);
-            } else {
-                const furMember = await message.guild?.members.fetch(fur.snowflake);
-                const furName = furMember?.displayName;
-
-                if (furName) {
-                    cacheRepository.insert(fur.snowflake, furName);
-                    founded.push(furName);
-                }
+            const furName = fur.name || fur.name!="" ? fur.name : await cacheRepository.getNameOfSnowflake(message, fur.snowflake);
+            if (furName) {
+                founded.push(furName);
             }
         } catch (err) {
             Logger.error(`Error para snowflake ${fur.snowflake}: ${err}.`);
-            await meetingService.delete(`/meeting/${fur.snowflake}`);
+            meetingService.deactive(fur.snowflake);
         }
     });
-
     await Promise.all(promises);
     return founded;
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
-import validateState from '../../utils/validateState';
+import isValidState from '../../utils/validateState';
 
 import meetingService from "../../services/MeetingService";
 import cacheRepository from '../../repositories/CacheRepository';
@@ -15,8 +15,8 @@ const command : Command = {
     async execute( { message, args } : CommandParams){
         const state = args![0]?.toUpperCase();
 
-        if (!validateState(state)) {
-            return message.reply(`Estado Inválido: '${args![0]}' tente outro!`);
+        if (!isValidState(state)) {
+            return message.reply(`Estado inválido: '${args![0]}'!`);
         }
         
         const organizer =  message.mentions.users.first()?.username ?? args![1] ;
@@ -25,10 +25,10 @@ const command : Command = {
             return message.channel.send('Nenhuma informação foi dada sobre o meet :/');
         }
 
-        const furs = await getFursByState(state);
+        const furs = await meetingService.getFursByState(state);
         
         if (furs.length === 0) {
-            return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do meet!');  
+            return message.reply('Infelizmente não achei ninguem nesse estado para avisar do meet!');  
         }
        
         const founded = await getFurMentions(message, furs);
@@ -40,31 +40,18 @@ const command : Command = {
     }
 };
 
-async function getFursByState(state: string) {
-    const { data } = await meetingService.get(`/meeting/state/${state}`);
-    return data.content || [];
-}
 
 async function getFurMentions(message: Message, furs: any[]) {
     let founded: string = "";
     const promises = furs.map(async (fur: any) => {
         try {
-            const cachedName = await cacheRepository.get(fur.snowflake);
-
+            const cachedName = await cacheRepository.getNameOfSnowflake(message, fur.snowflake);
             if (cachedName) {
                 founded += `<@${fur.snowflake}> `;
-            } else {
-                const furMember = await message.guild?.members.fetch(fur.snowflake);
-                const furName = furMember?.displayName;
-
-                if (furName) {
-                    cacheRepository.insert(fur.snowflake, furName);
-                    founded += `<@${fur.snowflake}> `;
-                }
             }
         } catch (err) {
             Logger.error(`Error para snowflake ${fur.snowflake}: ${err}.`);
-            await meetingService.delete(`/meeting/${fur.snowflake}`);
+            await meetingService.deactive(fur.snowflake);
         }
     });
 

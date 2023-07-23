@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import Redis from "ioredis";
 import { Logger } from "../helpers";
 const PREFIX: string = "fbbot:furmeet:username:";
@@ -20,6 +21,22 @@ class CacheRepository {
     
     async get(key:string) {
         return this.redis.get(`${PREFIX}${this.env}${key}`);
+    }
+    
+    async getNameOfSnowflake(message: Message,snowflake: string){
+        const cachedName = await this.get(snowflake);
+    
+        if (!cachedName) {
+            const furMember = await message.guild?.members.fetch(snowflake);
+            const furName = furMember?.displayName;
+    
+            if (furName) {
+                this.insert(snowflake, furName);
+                //TODO: Update in meeting present
+                return furName;
+            }
+        }
+        return cachedName;
     }
 }
 
