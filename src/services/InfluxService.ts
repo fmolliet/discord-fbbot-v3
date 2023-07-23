@@ -8,13 +8,13 @@ import {
 //@Service()
 class InfluxService {
     
-    private url     : string = process.env.INFLUX_HOST || 'http://localhost:8086'
-    private token   : string = process.env.INFLUX_TOKEN || ''
+    private url     : string = process.env.INFLUX_HOST ?? 'http://localhost:8086'
+    private token   : string = process.env.INFLUX_TOKEN ?? ''
     
-    private org     : string = process.env.INFLUX_ORG    || 'test'
-    private bucket  : string = process.env.INFLUX_BUCKET || 'dev'
+    private org     : string = process.env.INFLUX_ORG    ?? 'test'
+    private bucket  : string = process.env.INFLUX_BUCKET ?? 'dev'
     
-    private appname : string = process.env.APP || 'node'
+    private appname : string = process.env.INFLUX_APP ?? 'local'
     
     private client  : InfluxDB;
     
@@ -52,7 +52,7 @@ class InfluxService {
         this.writeApi
             .flush()
             .then(() => {
-                //console.log('')
+                console.log('')
             })
             .catch(e => {
                 console.error(e)
