@@ -61,4 +61,4 @@ class InfluxService {
     }
 }
 
-export default InfluxService;
+export default new InfluxService();

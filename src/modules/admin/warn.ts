@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { RULES } from '../../configs/rules';
+import { CONSTANTS } from '../../configs/Constants';
 import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
 import taskRepository from '../../repositories/TaskRepository';
@@ -18,7 +18,7 @@ const command : Command = {
             return message.reply('está faltando informar o motivo');
         }
         
-        const muteRoleId = process.env.NODE_ENV === 'dev'? '845850171975139328' : RULES.muteRoleId;
+        const muteRoleId = process.env.NODE_ENV === 'dev'? '845850171975139328' : CONSTANTS.muteRoleId;
         const time = process.env.NODE_ENV === 'dev'? 60 : (24*60*60);
         
         const mentionedUser = message.mentions.users.first();

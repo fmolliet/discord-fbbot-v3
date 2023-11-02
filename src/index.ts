@@ -3,13 +3,13 @@ import 'reflect-metadata';
 
 import { Bot    } from './bot';
 import { config } from './configs/app';
-import { Logger } from './helpers';
+import { Logger as LOG } from './helpers';
 
 console.clear();
 
 new Bot( config )
     .listen().then(() => {
-        Logger.info('Bot iniciando...');
+        LOG.info('Bot iniciando...');
     }).catch((error) => {
-        Logger.error('Oh no! ', error);
+        LOG.error('Oh no! ', error);
     });

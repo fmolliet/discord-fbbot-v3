@@ -1,7 +1,7 @@
 /* eslint-disable no-dupe-else-if */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RULES } from '../../configs/rules';
+import { CONSTANTS } from '../../configs/Constants';
 import { Command, CommandParams } from '../../interfaces';
 import { ChannelType, EmbedBuilder } from 'discord.js';
 
@@ -13,7 +13,7 @@ const command : Command = {
     cooldown: 5,
     async execute({ message , args, commands } : CommandParams) {
         // Adicionado filtro para onwers e admins
-        const isAdmin = ( message.channel.type !== ChannelType.DM && (await message.guild?.members.fetch(message.author.id))?.permissions.has('Administrator') ) || RULES.owners.includes(message.author.id);
+        const isAdmin = ( message.channel.type !== ChannelType.DM && (await message.guild?.members.fetch(message.author.id))?.permissions.has('Administrator') ) || CONSTANTS.owners.includes(message.author.id);
         const allComands = commands?.map(( command : Command ) => {
             if ( command.adminOnly && isAdmin ) {
                 return command.name;
@@ -33,11 +33,11 @@ const command : Command = {
                 fields: [
                     {
                         name: 'Comandos disponíveis para você:',
-                        value: allComands?.filter(( command )=> command).join(', ') || ""
+                        value: allComands?.filter(( command )=> command).join(', ') ?? ""
                     },
                     {
                         name: 'Obs:',
-                        value: `\nVocê pode mandar \`${RULES.prefix}help [Nome do comando]\` para saber mais sobre algum comando!`
+                        value: `\nVocê pode mandar \`${CONSTANTS.prefix}help [Nome do comando]\` para saber mais sobre algum comando!`
                     }
                     
                 ],
@@ -88,13 +88,13 @@ const command : Command = {
         if (command.usage) {
             messageEmbed.addFields({
                 name:'Exemplo de uso:',
-                value: `${RULES.prefix}${command.name} ${command.usage}`
+                value: `${CONSTANTS.prefix}${command.name} ${command.usage}`
             });
         }
 
         messageEmbed.addFields({
             name:'Cooldown:',
-            value: `${command.cooldown || 3} segundo(s)`
+            value: `${command.cooldown ?? 3} segundo(s)`
         });
 
         return message.channel.send({embeds:[messageEmbed]});
