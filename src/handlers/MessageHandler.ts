@@ -101,13 +101,24 @@ export default class MessageHandler {
         .replace(">", "")
         .replace("<@", "")
         .replace("<", "");
-
-      if (!(await message.guild?.members.fetch(userID))) {
-        message.reply(
-          `membro não encontrado no servidor com id: \`${userID}\``
-        );
-        return;
-      }
+        
+        try {
+            const member = await message.guild?.members.fetch(userID);
+            
+            if (!(member)) {
+                message.reply(
+                  `Membro não encontrado no servidor com id: \`${userID}\``
+                );
+                return;
+            }
+        } catch ( ex){
+            LOG.error(`WARN Inválido do usuário ${mention}`)
+            message.reply(
+                `Membro inválido: \`${userID}\`, digite novamente!`
+            );
+            return;
+        }
+      
     }
 
     if (
@@ -118,7 +129,7 @@ export default class MessageHandler {
       return;
     }
 
-    // TODO implementar filtro de ChannelID para executar comando somente em um certo canal.
+    /** implementar filtro de ChannelID para executar comando somente em um certo canal.*/
 
     //COOLDOWN
     if (!this.cooldowns.has(command.name)) {
@@ -158,7 +169,8 @@ export default class MessageHandler {
         client: this.client,
       });
     } catch (error) {
-
+      LOG.error(error);
+      console.log(error);
       InfluxService.write("execution", "error");
       message.reply(
         "Ocorreu um erro na execução do comando, entre em contato com o dev!"

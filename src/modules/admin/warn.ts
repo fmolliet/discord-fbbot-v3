@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CONSTANTS } from '../../configs/Constants';
-import { Logger } from '../../helpers';
+import { Logger as LOG } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
 import taskRepository from '../../repositories/TaskRepository';
 import warnRepository from '../../repositories/WarnRepository';
@@ -56,7 +56,7 @@ const command : Command = {
                 // Mute tag
                 member?.roles.add(role).then(()=> message.reply('warn aplicado, o membro foi punido com mute!'))
                     .catch((error: { message: any })=>{
-                        Logger.error(error.message);
+                        LOG.error(error.message);
                         message.channel.send('Não consegui adicionar a role de mute nele!');
                     });  
                             
@@ -66,7 +66,7 @@ const command : Command = {
                     member?.roles.remove(role)
                         .then(async()=>  taskRepository?.deleteTask(task))
                         .catch((error: { message: any; })=>{
-                            Logger.error(error.message);
+                            LOG.error(error.message);
                             message.channel.send('Não consegui remover a role de mute desse cara!');
                         });  
                 },muteTime);
@@ -81,7 +81,7 @@ const command : Command = {
                 member?.kick('Kickado por ter tomado warning demais')
                     .then(()=> message.reply('warn aplicado, o membro foi punido com Kick!'))
                     .catch((error: { message: any; })=>{
-                        Logger.error(error.message);
+                        LOG.error(error.message);
                         message.reply('ouve um erro na execução do kick, provavelmente estou sem permissão!');
                     });  
 
@@ -92,7 +92,7 @@ const command : Command = {
                 member?.ban({reason: 'Tomou 4 warnings ¯\\_(ツ)_/¯'})
                     .then(()=> message.reply('warn aplicado, o membro foi punido com Ban!'))
                     .catch((error: { message: any; })=>{
-                        Logger.error(error.message);
+                        LOG.error(error.message);
                         message.reply('ouve um erro na execução do ban, provavelmente estou sem permissão!');
                     });   
                 
@@ -117,8 +117,8 @@ const command : Command = {
                 ]
                 });
             } catch ( ex ){
-                Logger.error("Erro ao tentar enviar mensagem para o membro...");
-                Logger.error(ex);
+                LOG.error("Erro ao tentar enviar mensagem para o membro...");
+                LOG.error(ex);
             }
             
             return message.reply(`Enviado warn para o membro \`${member?.displayName}\`!`);
