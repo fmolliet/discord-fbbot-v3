@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Client, GatewayIntentBits, } from 'discord.js';
+import {Client, GatewayIntentBits, Partials, } from 'discord.js';
 import {  AppConfig } from './interfaces';
 
 import database    from './database/connect';
@@ -29,6 +29,13 @@ export class Bot {
             GatewayIntentBits.MessageContent,
             GatewayIntentBits.DirectMessageTyping,
             GatewayIntentBits.DirectMessageReactions
+        ],
+        partials: [
+            Partials.Channel,
+            Partials.Message,
+            Partials.User,
+            Partials.Channel,
+            Partials.Reaction
         ]});
 
         this.configuration = config;
@@ -47,22 +54,22 @@ export class Bot {
     }
     
     private handleErrors(): void {
-        const error = new ErrorHandler();
-        this.client.on("error", error.handle);
+        const handler = new ErrorHandler();
+        this.client.on("error", handler.handle);
     }
     
-    private handleMessage() : void {
-        const message = new MessageHandler(this.client);
-        this.client.on('messageCreate', message.handle);
-        
+    private async handleMessage() : Promise<void> {
+        const handler = new MessageHandler(this.client);
+        handler.load();
+        this.client.on('messageCreate', async (message)=> {
+            handler.handle(message);
+        });
     }
     
-    private async setup(){
-        this.handleMessage();
+    private async setup() : Promise<void> {
         this.handleErrors();
+        await this.handleMessage();
         await this.handleReady();
-        // busco no banco as config
-        // Busco no banco As tarefas -> memoria 
         await removeMuteTask( this.client );
     }
     
