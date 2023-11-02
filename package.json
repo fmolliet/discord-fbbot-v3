@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.20.0",
-    "axios": "^0.21.1",
+    "axios": "1.6.0",
     "cross-env": "^7.0.3",
     "discord.js": "^14.11.0",
     "dotenv": "^9.0.2",
@@ -41,7 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
     "eslint": "^7.26.0",
-    "nodemon": "^1.14.9",
+    "nodemon": "^3.0.1",
     "ts-node": "^9.1.1"
   }
 }

@@ -131,6 +131,8 @@ temp/*.png
 out/
 target/
 
+./package-lock.json
+
 *.env.local
 *.env.production
 *.xlsx
