@@ -1,7 +1,6 @@
 import TaskModel from '../models/Task';
 import { Task } from '../interfaces';
-
-export default class TaskRepository {
+class TaskRepository {
     
     public async getAllTasks(): Promise<Array<Task|null>> {
         return TaskModel.find();
@@ -15,3 +14,5 @@ export default class TaskRepository {
         TaskModel.deleteOne(task); 
     }
 }
+
+export default new TaskRepository();

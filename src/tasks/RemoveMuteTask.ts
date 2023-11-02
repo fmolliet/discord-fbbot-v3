@@ -2,9 +2,9 @@
 import { Client } from 'discord.js';
 import { RULES } from '../configs/rules';
 import { Logger } from '../helpers';
-import TaskRepository from '../repositories/TaskRepository';
+import taskRepository from '../repositories/TaskRepository';
 
-export async function RemoveMuteTask( client: Client, taskRepository : TaskRepository ) : Promise<void>{
+export async function removeMuteTask( client: Client) : Promise<void>{
     
     const muteRoleId = process.env.NODE_ENV === 'dev'? '845850171975139328' : RULES.muteRoleId;
     

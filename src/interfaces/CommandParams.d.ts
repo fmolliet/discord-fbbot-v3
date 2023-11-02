@@ -10,7 +10,4 @@ export interface CommandParams {
     args?: Array<string>
     commands?: Collection<string, Command>
     client ?: Client
-    setPrefix ?: (prefix:string) => void
-    taskRepository ?: TaskRepository
-    warnRepository ?: WarnRepository
 }

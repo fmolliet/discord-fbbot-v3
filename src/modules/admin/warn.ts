@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DiscordAPIError, EmbedBuilder  } from 'discord.js';
 import { RULES } from '../../configs/rules';
 import { Logger } from '../../helpers';
 import { Command, CommandParams } from '../../interfaces';
+import taskRepository from '../../repositories/TaskRepository';
+import warnRepository from '../../repositories/WarnRepository';
 
 const command : Command = {
     name: 'warn',
@@ -11,7 +12,7 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     hasMention: true,
-    async execute({message, args, taskRepository, warnRepository } : CommandParams){
+    async execute({message, args } : CommandParams){
 
         if ( ! args![1] ) { // Verifica se tem o motivo do warn
             return message.reply('está faltando informar o motivo');
@@ -21,7 +22,7 @@ const command : Command = {
         const time = process.env.NODE_ENV === 'dev'? 60 : (24*60*60);
         
         const mentionedUser = message.mentions.users.first();
-        const userId = mentionedUser?.id || args![0];
+        const userId = mentionedUser?.id ?? args![0];
         // Mute
         const muteTime = 1000 * time;/* */
         const removeAt = new Date(Date.now() + muteTime) ;
@@ -37,14 +38,14 @@ const command : Command = {
                 return message.reply('você precisa dar um motivo!');
             }
             
-            const description = args?.join(' ') || '';
+            const description = args?.join(' ') ?? '';
             // Adiciona o warn
             await warnRepository?.createWarn({description: description, userId:  member.id, guildId: message.guild.id, createdAt: new Date(Date.now()) });
             // Conta quantos warns a pessoa ja tomou para atribuir puniÇão
             const warns = await warnRepository?.getWarnsByUserId(member.id);
             let punicao = '';
             // Se foi menos que 3 warns ele irá mutar
-            if (warns!.length < 3 ) {
+            if (warns.length < 3 ) {
             
                 const role = message.guild.roles.cache.get(muteRoleId);
                 
@@ -54,7 +55,7 @@ const command : Command = {
                 
                 // Mute tag
                 member?.roles.add(role).then(()=> message.reply('warn aplicado, o membro foi punido com mute!'))
-                    .catch((error: { message: any; })=>{
+                    .catch((error: { message: any })=>{
                         Logger.error(error.message);
                         message.channel.send('Não consegui adicionar a role de mute nele!');
                     });  
@@ -63,7 +64,7 @@ const command : Command = {
                 
                 setTimeout( ()=> {
                     member?.roles.remove(role)
-                        .then(async()=>  taskRepository?.deleteTask(task!))
+                        .then(async()=>  taskRepository?.deleteTask(task))
                         .catch((error: { message: any; })=>{
                             Logger.error(error.message);
                             message.channel.send('Não consegui remover a role de mute desse cara!');
@@ -73,7 +74,7 @@ const command : Command = {
                 punicao = 'Mute';
                 // Feedback do comando para staff
                 
-            } else if ( warns!.length === 3 ){
+            } else if ( warns.length === 3 ){
                 // Kicka e retorna mensagem para dm
                 punicao = 'Kick';
                 
@@ -102,7 +103,7 @@ const command : Command = {
             try {
                 member?.send( { embeds: [
                     {
-                        title: `Você recebeu o seu ${warns!.length}º warning! `,
+                        title: `Você recebeu o seu ${warns.length}º warning! `,
                         color: 0xFF0000,
                         fields: [
                             { name: 'Motivo:', value: description },

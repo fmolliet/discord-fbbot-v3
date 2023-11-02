@@ -9,11 +9,8 @@ import { promisify } from 'util';
 import { RULES }   from './configs/rules';
 import database    from './database/connect';
 
-import TaskRepository    from './repositories/TaskRepository';
-import WarnRepository    from './repositories/WarnRepository';
-
 import { Logger } from './helpers';
-import { RemoveMuteTask } from './tasks/RemoveMuteTask';
+import { removeMuteTask } from './tasks/RemoveMuteTask';
 import InfluxService from './services/InfluxService';
 
 import { performance } from 'perf_hooks';
@@ -29,8 +26,8 @@ export class Bot {
     private commands : Collection<string, Command> = new Collection();
     private cooldowns = new Collection();
     
-    private taskRepository    = new TaskRepository();
-    private warnRepository    = new WarnRepository();
+    // private taskRepository    = new TaskRepository();
+    // private warnRepository    = new WarnRepository();
     
     private _influxService = new InfluxService()    
 
@@ -42,6 +39,8 @@ export class Bot {
             GatewayIntentBits.GuildModeration,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
+            GatewayIntentBits.DirectMessageTyping,
+            GatewayIntentBits.DirectMessageReactions
         ]});
 
         this.prefix = config.prefix;
@@ -56,15 +55,15 @@ export class Bot {
     private async setup(){
         // busco no banco as config
         // Busco no banco As tarefas -> memoria 
-        await RemoveMuteTask( this.client, this.taskRepository );
+        await removeMuteTask( this.client );
     }
 
     private async handleReady() : Promise<void> {
         // Cheat Sheet de dos eventos: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584#file-discordjs-cheatsheet-js-L141
         
-        this.client.once('ready', async() => {
+        this.client.once('ready', async( client ) => {
             // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
-            this.client.guilds.cache.each( ( guild: Guild, _key: string, _collection: Collection<string, Guild>) => {
+            client.guilds.cache.each( ( guild: Guild, _key: string, _collection: Collection<string, Guild>) => {
                 if (!RULES.whitelistGroups.includes(guild.id)){
                     Logger.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
                     guild.leave();
@@ -73,10 +72,10 @@ export class Bot {
             
             // Mostrando nome e url para adicionar
             Logger.info(`BOT: ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
-            Logger.info(`Logado como ${this.client.user?.tag}! | conectado á ${this.client.guilds.valueOf().size} servidores` );
-            Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id}&scope=bot&permissions=8`);
+            Logger.info(`Logado como ${client.user?.tag}! | conectado á ${client.guilds.valueOf().size} servidores` );
+            Logger.info(`https://discordapp.com/oauth2/authorize?client_id=${client.user?.id}&scope=bot&permissions=8`);
             // Alterando a presence
-            this.client.user?.setPresence({
+            client.user?.setPresence({
                 activities: [
                     {
                         type: ActivityType.Listening,
@@ -105,7 +104,7 @@ export class Bot {
     }
     
     private handleErrors(): void {
-        this.client.on("error", ( error)=>{
+        this.client.on("error", ( error )=>{
             Logger.error("EVENT HANDLER: " +error.message, error.stack);
             throw new Error(error.message);
         });
@@ -217,10 +216,7 @@ export class Bot {
                 await command.execute({ message,
                     args,
                     commands: this.commands,
-                    client: this.client,
-                    setPrefix: this.setPrefix,
-                    taskRepository: this.taskRepository,
-                    warnRepository: this.warnRepository
+                    client: this.client
                 });
             } catch (error) {
                 Logger.error(error);

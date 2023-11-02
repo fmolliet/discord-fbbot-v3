@@ -2,7 +2,7 @@ import WarnModel from '../models/Warn';
 import { Warn } from '../interfaces';
 import { Snowflake } from 'discord.js';
 
-export default class WarnRepository {
+class WarnRepository {
     
     public async getWarnsByUserId( userId: string | Snowflake | undefined ): Promise<Array<Warn|null>> {
         return WarnModel.find({
@@ -18,3 +18,5 @@ export default class WarnRepository {
         WarnModel.deleteOne(warn);
     }
 }
+
+export default new WarnRepository();

@@ -13,11 +13,11 @@ const command : Command = {
             fields: [
                 {
                     name: 'Nome do servidor',
-                    value: message.guild?.name || ''
+                    value: message.guild?.name ?? ''
                 },
                 {
                     name: 'Total membros',
-                    value: message.guild?.memberCount.toString() || ''
+                    value: message.guild?.memberCount.toString() ?? ''
                 }
             ],
             timestamp: new Date().toISOString(),
