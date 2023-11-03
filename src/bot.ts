@@ -78,7 +78,6 @@ export class Bot {
   }
   
   private handleDebug(){
-    LOG.isLevelEnabled("DEBUG")
     this.client.on(Events.Debug, (message)=>{
       LOG.debug(message)
     });
