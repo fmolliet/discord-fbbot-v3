@@ -7,16 +7,15 @@ export default class ReadyHandler {
         // Adicionado nova funcionalidade que quando startar ele sai dos servidores não flagados como whitelisted
         client.guilds.cache.each( ( guild: Guild, _key: string, _collection: Collection<string, Guild>) => {
             if (!CONSTANTS.whitelistGroups.includes(guild.id)){
-                LOG.info(`Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
+                LOG.warn(`[NOK] Eita, me colocaram no server: ${guild.name}, eu estou saindo!` );
                 guild.leave();
             }
         });
         
-        // Mostrando nome e url para adicionar
-        LOG.info(`BOT: ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
-        LOG.info(`Logado como ${client.user?.tag}! | conectado á ${client.guilds.valueOf().size} servidores` );
-        LOG.info(`https://discordapp.com/oauth2/authorize?client_id=${client.user?.id}&scope=bot&permissions=8`);
-        // Alterando a presence
+        LOG.info(`[INIT] BOT: ${process.env.APP_NAME} - v${process.env.npm_package_version}`)
+        LOG.info(`[INIT] Logado como ${client.user?.tag}! | conectado á ${client.guilds.valueOf().size} servidores` );
+        LOG.info(`[INIT] https://discordapp.com/oauth2/authorize?client_id=${client.user?.id}&scope=bot&permissions=8`);
+
         client.user?.setPresence({
             activities: [
                 {

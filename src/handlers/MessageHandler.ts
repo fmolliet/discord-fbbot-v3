@@ -19,16 +19,7 @@ export default class MessageHandler {
   public async handle(command: Command, message: Message) {
     const startTime = performance.now();
 
-    if (
-        !message.content.startsWith(CONSTANTS.prefix) ||
-        message.author.bot ||
-        message.webhookId
-      ) {
-        return;
-      }
-  
-      LOG.info("Mensagem recebida: " + message.content);
-      const args: Array<string> = message.content
+    const args: Array<string> = message.content
         .slice(CONSTANTS.prefix.length)
         .split(/ +/);
 

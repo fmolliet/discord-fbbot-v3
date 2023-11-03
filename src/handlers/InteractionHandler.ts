@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../interfaces";
 
 export default class InteractionHandler {

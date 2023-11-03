@@ -9,7 +9,7 @@ console.clear();
 
 new Bot( config )
     .listen().then(() => {
-        LOG.info('Bot inicializado.');
+        LOG.info('[INIT] Bot inicializado.');
     }).catch((error) => {
-        LOG.error('Oh no! ', error);
+        LOG.error("[INIT] Erro durante a inicialização: ", error);
     });
