@@ -12,7 +12,7 @@ class CacheRepository {
     
     constructor(){
         this.redis = new Redis(process.env.REDIS_URL!);
-        Logger.info("[DB] Redis configurado")
+        Logger.info("[DB] Redis configurado.")
     }
     
     async insert(key:string, value: string) {
