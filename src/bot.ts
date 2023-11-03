@@ -65,19 +65,27 @@ export class Bot {
       });
   }
 
-  private async handleReady(): Promise<void> {
+  private async handleReady(){
     // Cheat Sheet de dos eventos: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584#file-discordjs-cheatsheet-js-L141
     const ready = new ReadyHandler();
     this.client.once(Events.ClientReady, ready.handle);
     await database.connect(this.configuration.db);
   }
 
-  private handleErrors(): void {
+  private handleErrors(){
     const handler = new ErrorHandler();
     this.client.on(Events.Error, handler.handle);
   }
+  
+  private handleDebug(){
+    LOG.isLevelEnabled("DEBUG")
+    this.client.on(Events.Debug, (message)=>{
+      LOG.debug(message)
+    });
+  }
 
-  private async handleInteration(): Promise<void> {
+
+  private async handleInteration(){
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
       LOG.info(`[EVENT] interação: ${interaction.commandName}`);
@@ -85,6 +93,18 @@ export class Bot {
 
       new InteractionHandler().handle(command, interaction);
     });
+  }
+  
+  private async registerBastion(){
+     //TODO: Implementar Bastion, o monitor da sala de entrada
+      
+  }
+  
+  private async handleJoinGuild(){
+    this.client.on(Events.GuildMemberAdd, (member)=>{
+      //TODO: Implementar mensagem ao entrar
+      member.send("mensagem de boas vindas!");
+    })
   }
 
   private async handleMessage(): Promise<void> {
@@ -162,6 +182,7 @@ export class Bot {
   
   private async setup(): Promise<void> {
     this.handleErrors();
+    this.handleDebug();
     await this.handleReady();
     await this.loadCommands();
     await this.registerCommands();

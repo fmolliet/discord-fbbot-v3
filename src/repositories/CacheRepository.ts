@@ -32,7 +32,6 @@ class CacheRepository {
     
             if (furName) {
                 this.insert(snowflake, furName);
-                //TODO: Update in meeting present
                 return furName;
             }
         }

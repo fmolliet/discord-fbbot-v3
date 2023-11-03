@@ -27,11 +27,11 @@ const format: winston.Logform.Format = winston.format.combine(
 );
 
 const Logger : winston.Logger = winston.createLogger({
-    level: 'info',
+    level: process.env.LOG_LEVEL ?? "info",
     levels: levels,
     format: format,
     transports: [
-        new winston.transports.Console({ level: 'info' }),
+        new winston.transports.Console({ level: process.env.LOG_LEVEL ?? "info" }),
     ],
 });
 
