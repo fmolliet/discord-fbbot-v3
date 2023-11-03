@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmbedBuilder } from '@discordjs/builders';
 import { Command, CommandParams } from '../../interfaces';
+import warnRepository from '../../repositories/WarnRepository';
 
 const command : Command = {
     name: 'buscawarn',
@@ -10,10 +11,10 @@ const command : Command = {
     guildOnly: true,
     adminOnly: true,
     hasMention: true,
-    async execute({message, args, warnRepository } : CommandParams){
+    async execute({message, args } : CommandParams){
         
         const mentionedUser = message.mentions.users.first();
-        const userId = mentionedUser?.id || args![0];
+        const userId = mentionedUser?.id ?? args![0];
 
         // Grava tarefa no banco
         if ( await message.guild?.members.fetch(userId) ){
@@ -35,12 +36,12 @@ const command : Command = {
             warns?.map(( warn, index )=>{
                 messageEmbed.addFields({
                     name: `${index +1}º Motivo:`,
-                    value: `${warn?.description}\n***Recebido em***:\n${warn?.createdAt.getDate()}/${(warn?.createdAt.getMonth() ||0) + 1}/${warn?.createdAt.getFullYear()} ás ${warn?.createdAt.getHours()}:${warn?.createdAt.getMinutes()}`,
+                    value: `${warn?.description}\n***Recebido em***:\n${warn?.createdAt.getDate()}/${(warn?.createdAt.getMonth() ??0) + 1}/${warn?.createdAt.getFullYear()} ás ${warn?.createdAt.getHours()}:${warn?.createdAt.getMinutes()}`,
                     inline: false
                 });
             });
             
-            if ( warns!.length < 1){
+            if ( warns.length < 1){
                 messageEmbed.setDescription('Não recebeu nenhum warn ainda.');
             }
             

@@ -1,5 +1,5 @@
 import { Attachment, MessagePayload, TextChannel } from 'discord.js';
-import { RULES } from '../../configs/rules';
+import { CONSTANTS } from '../../configs/Constants';
 import { Command, CommandParams } from '../../interfaces';
 import { Logger } from '../../helpers';
 import twitterService from '../../services/TwitterService';
@@ -12,7 +12,7 @@ const command : Command = {
     adminOnly: true,
     async execute({ message, client } : CommandParams){
 
-        const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : RULES.gameChannel;
+        const channelId = process.env.NODE_ENV === 'dev'? '843694264272814110' : CONSTANTS.gameChannel;
         const channel = client?.channels.cache.get(channelId);
 
         

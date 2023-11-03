@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "@discordjs/builders";
+import { EmbedBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord.js";
 import { Command, CommandParams } from "../../interfaces";
 import getRandomEmoji from "../../utils/getRandomEmoji";
