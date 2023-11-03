@@ -3,7 +3,7 @@ import { AppConfig } from "../interfaces";
 export const config: AppConfig = {
   env: process.env.NODE_ENV,
   token: process.env.DISCORD_TOKEN,
-  discordBotToken: process.env.DISCORDBOTS_TOKEN,
+  botId: process.env.DISCORD_BOTID,
   owner: process.env.BOT_OWNER,
   prefix: "!",
   db: {

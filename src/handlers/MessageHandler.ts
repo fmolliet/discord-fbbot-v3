@@ -2,43 +2,36 @@ import { ChannelType, Client, Collection, Message } from "discord.js";
 import { Logger as LOG } from "../helpers";
 import { CONSTANTS } from "../configs/Constants";
 import { Command } from "../interfaces";
-import { promisify } from "util";
-import { glob } from "glob";
+
 import InfluxService from "../services/InfluxService";
-const globPromise = promisify(glob);
 
 export default class MessageHandler {
-  private commands: Collection<string, Command> = new Collection();
+  
   private cooldowns = new Collection();
   private client: Client;
+  private commands: Collection<string, Command>;
 
-  constructor(client: Client) {
+  constructor(client: Client, commands: Collection<string, Command>) {
     this.client = client;
+    this.commands = commands;
   }
 
-  public async handle(message: Message) {
+  public async handle(command: Command, message: Message) {
     const startTime = performance.now();
 
     if (
-      !message.content.startsWith(CONSTANTS.prefix) ||
-      message.author.bot ||
-      message.webhookId
-    ) {
-      return;
-    }
+        !message.content.startsWith(CONSTANTS.prefix) ||
+        message.author.bot ||
+        message.webhookId
+      ) {
+        return;
+      }
+  
+      LOG.info("Mensagem recebida: " + message.content);
+      const args: Array<string> = message.content
+        .slice(CONSTANTS.prefix.length)
+        .split(/ +/);
 
-    LOG.info("Mensagem recebida: " + message.content);
-    const args: Array<string> = message.content
-      .slice(CONSTANTS.prefix.length)
-      .split(/ +/);
-
-    const commandName = args.shift()!.toLowerCase();
-    const command = this.getCommand(commandName);
-
-    if (!command) {
-      LOG.error("Comando não encontrado!");
-      return;
-    }
     LOG.info("Comando a se executado: " + command.name.toUpperCase());
     // verifica se são comandos de servidor somente
     if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
@@ -165,8 +158,8 @@ export default class MessageHandler {
       await command.execute({
         message,
         args,
-        commands: this.commands,
         client: this.client,
+        commands: this.commands
       });
     } catch (error) {
       LOG.error(error);
@@ -180,30 +173,5 @@ export default class MessageHandler {
     LOG.info(`Execution time: ${(endTime - startTime).toFixed(3)} ms`);
   }
 
-  async load() {
-    const commands = await globPromise("src/modules/**/*.ts");
-    if (commands.length < 1) {
-      LOG.error("Nenhuma funcionalidade encontrada.");
-      throw new Error("No module found");
-    }
-    for (const file of commands) {
-      const command = (await import(
-        file.replace("src/", "../").replace(".ts", "")
-      )) as Command;
-
-      this.commands.set(command.name, command);
-    }
-    LOG.info(`${commands.length} módulos de comandos carregados.`);
-  }
-
-  getCommand(commandName: string): Command {
-    const command = this.commands.get(commandName) as Command;
-    if (command) {
-      return command;
-    }
-    // Realizei um assert non-Null  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
-    return this.commands.find(
-      (cmd) => cmd.aliases! && cmd.aliases.includes(commandName)
-    ) as Command;
-  }
+  
 }
