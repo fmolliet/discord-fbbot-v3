@@ -16,19 +16,15 @@ export default class MessageHandler {
     this.commands = commands;
   }
 
-  public async handle(command: Command, message: Message) {
+  public async handle(command: Command, message: Message, args: Array<string>) {
     const startTime = performance.now();
-
-    const args: Array<string> = message.content
-        .slice(CONSTANTS.prefix.length)
-        .split(/ +/);
-
-    LOG.info("Comando a se executado: " + command.name.toUpperCase());
+    
     // verifica se são comandos de servidor somente
     if (command.guildOnly && message.channel.type !== ChannelType.GuildText) {
       setTimeout(() => {
         message.delete();
       }, 1000);
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} somente no grupo.`);
       message.reply("Esse comando é exclusivo para servidor!");
       return;
     }
@@ -37,6 +33,7 @@ export default class MessageHandler {
       setTimeout(() => {
         message.delete();
       }, 1000);
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} somente DM.`);
       message.author.send("Esse comando somente pode ser executado no pv!");
       return;
     }
@@ -50,11 +47,13 @@ export default class MessageHandler {
         "KickMembers"
       )
     ) {
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} somente para adminstradores.`);
       message.reply("Somente administradores podem utilizar esse comando!");
       return;
     }
 
     if (command.ownerOnly && !CONSTANTS.owners.includes(message.author.id)) {
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} somente para owner.`);
       message.reply("Somente donos podem utilizar esse comando!");
       return;
     }
@@ -64,6 +63,7 @@ export default class MessageHandler {
       message.mentions.users.size < 1 &&
       args.length < 1
     ) {
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} ausência de mensão.`);
       message.reply(
         "Parece que você não marcou ninguem e não passou nenhum ID!"
       );
@@ -71,6 +71,7 @@ export default class MessageHandler {
     }
 
     if (command.hasArgs && args.length === 0) {
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} ausência de parâmetros.`);
       message.reply(
         `está faltando informar algo parça! dá uma olhada usando o comando: \`${CONSTANTS.prefix}help ${command.name}\``
       );
@@ -90,13 +91,14 @@ export default class MessageHandler {
             const member = await message.guild?.members.fetch(userID);
             
             if (!(member)) {
+                LOG.warn(`Comando:  + ${command.name.toUpperCase()} membro não encontrado no servidor com id: ${userID}.`);
                 message.reply(
                   `Membro não encontrado no servidor com id: \`${userID}\``
                 );
                 return;
             }
         } catch ( ex){
-            LOG.error(`WARN Inválido do usuário ${mention}`)
+            LOG.warn(`Comando:  + ${command.name.toUpperCase()} com usuário inválido: ${mention}.`);
             message.reply(
                 `Membro inválido: \`${userID}\`, digite novamente!`
             );
@@ -109,6 +111,7 @@ export default class MessageHandler {
       command.hasAttachment &&
       (!message.attachments || message.attachments)
     ) {
+      LOG.warn(`Comando:  + ${command.name.toUpperCase()} não recebeu anexos.`);
       message.reply("não tem nenhum anexo nessa mensagem");
       return;
     }
@@ -144,6 +147,7 @@ export default class MessageHandler {
     // fim cooldown
 
     try {
+      LOG.info("Comando a se executado: " + command.name.toUpperCase());
       InfluxService.write("command", command.name);
       InfluxService.write("execution", "uses");
       await command.execute({
@@ -161,7 +165,7 @@ export default class MessageHandler {
       );
     }
     const endTime = performance.now();
-    LOG.info(`Execution time: ${(endTime - startTime).toFixed(3)} ms`);
+    LOG.debug(`Execution time: ${(endTime - startTime).toFixed(3)} ms`);
   }
 
   

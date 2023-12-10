@@ -51,7 +51,10 @@ async function getFurNames(message: Message, furs: any[]) {
         } catch (err) {
             Logger.error(`Error para snowflake ${fur.snowflake}: ${err}.`);
             try {
-                await meetingService.deactive(fur.snowflake);
+                if (process.env.ENVIRONMENT == "prod"){
+                    Logger.warn("Deactivating fur snowflake from db.")
+                    await meetingService.deactive(fur.id);
+                }
             } catch ( ex: unknown | AxiosError){
                 if (axios.isAxiosError(ex)){
                     Logger.error(`Erro ao tentar desativar: ${ex.message}`)

@@ -6,6 +6,7 @@ import isValidState from '../../utils/validateState';
 import meetingService from "../../services/MeetingService";
 import cacheRepository from '../../repositories/CacheRepository';
 import { Message } from 'discord.js';
+import { AxiosError, isAxiosError } from 'axios';
 
 const command : Command = {
     name: 'meeting',
@@ -50,7 +51,16 @@ async function getFurMentions(message: Message, furs: any[]) {
             }
         } catch (err) {
             Logger.error(`Error para snowflake ${fur.snowflake}: ${err}.`);
-            await meetingService.deactive(fur.snowflake);
+            try {
+                if (process.env.ENVIRONMENT == "prod"){
+                    Logger.warn("Deactivating fur snowflake from db.")
+                    await meetingService.deactive(fur.id);
+                }
+            } catch ( ex: unknown | AxiosError){
+                if (isAxiosError(ex)){
+                    Logger.error(`Erro ao tentar desativar: ${ex.message}`)
+                }
+            }
         }
     });
 

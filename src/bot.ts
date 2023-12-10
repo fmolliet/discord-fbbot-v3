@@ -87,22 +87,30 @@ export class Bot {
   private async handleInteration(){
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
-      LOG.info(`[EVENT] interação: ${interaction.commandName}`);
+      LOG.info(`[EVENT] interação: ${interaction.commandName} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
       const command = this.getCommand(interaction.commandName);
 
       new InteractionHandler().handle(command, interaction);
     });
   }
   
+  private async handleModalInteraction(){
+    // TODO: Implementar
+    this.client.on(Events.InteractionCreate, async (interaction) => {
+      if (!interaction.isModalSubmit()) return;
+      LOG.info(`[EVENT] Submit: ${interaction.id} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
+    });
+  }
+  
   private async registerBastion(){
-     //TODO: Implementar Bastion, o monitor da sala de entrada
+    //TODO: Implementar Bastion, o monitor da sala de entrada
       
   }
   
   private async handleJoinGuild(){
     this.client.on(Events.GuildMemberAdd, (member)=>{
       //TODO: Implementar mensagem ao entrar
-      member.send("mensagem de boas vindas!");
+      //member.send("mensagem de boas vindas!");
     })
   }
 
@@ -118,7 +126,7 @@ export class Bot {
         return;
       }
 
-      LOG.info("[EVENT] mensagem: " + message.content);
+      LOG.info(`[EVENT] mensagem: ${message.content} pelo usuário: ${message.author.username} id: <@${message.author.id}>`);
 
       const args: Array<string> = message.content
         .slice(CONSTANTS.prefix.length)
@@ -126,7 +134,7 @@ export class Bot {
       const commandName = args.shift()!.toLowerCase();
       const command = this.getCommand(commandName);
 
-      messageHandler.handle(command, message);
+      messageHandler.handle(command, message, args);
     });
   }
   

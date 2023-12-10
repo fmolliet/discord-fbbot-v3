@@ -10,7 +10,6 @@ const command: Command = {
   description: "Cadastra seu aniversário para ser marcado no dia!",
   usage: "[dia]/[mes]",
   guildOnly: true,
-  cooldown: 60,
   aliases: ["aniversario", "niver", "bd", "birthdays"],
   hasArgs: true,
   async execute({ message, args }: CommandParams) {
