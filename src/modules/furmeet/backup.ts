@@ -11,10 +11,17 @@ import meetingService from "../../services/MeetingService";
 const command: Command = {
     name: 'backup',
     description: 'Realiza o backup do furmeet para a staff!',
+    usage: '[Tipo: birthday|furmeet]',
+    hasArgs: true,
     guildOnly: true,
     adminOnly: true,
     cooldown: 120,
-    async execute({ message }: CommandParams) : Promise<Message[]|Message>  {
+    async execute({ message , args }: CommandParams) : Promise<Message[]|Message>  {
+        const type = args![0]?.toUpperCase();
+    
+        if (!isValidType(type)) {
+            return message.reply(`Tipo inválido: '${args![0]}', escolha entre birthday e furmeet!`);
+        }
 
         const report : CreatedReporter  = await createReport();
 
@@ -42,6 +49,10 @@ const command: Command = {
         );
     }
 };
+
+function isValidType( type: string ){
+    return type == "birthday" || type == "furmeet";
+}
 
 
 async function fillReport(message: Message, report: CreatedReporter, furs: any[]) {
