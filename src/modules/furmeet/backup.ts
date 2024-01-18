@@ -11,7 +11,7 @@ import meetingService from "../../services/MeetingService";
 const command: Command = {
     name: 'backup',
     description: 'Realiza o backup do furmeet para a staff!',
-    usage: '[Tipo: birthday|furmeet]',
+    usage: '[birthday|furmeet]',
     hasArgs: true,
     guildOnly: true,
     adminOnly: true,
@@ -28,7 +28,7 @@ const command: Command = {
         const furs = await meetingService.getActiveFurs();
         
         if (furs.length === 0) {
-            return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do meet!');  
+            return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
         }
 
         message.channel.send('Montando backup...');
@@ -51,7 +51,7 @@ const command: Command = {
 };
 
 function isValidType( type: string ){
-    return type == "birthday" || type == "furmeet";
+    return type === "birthday" || type === "furmeet";
 }
 
 

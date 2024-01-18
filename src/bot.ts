@@ -133,7 +133,11 @@ export class Bot {
         .split(/ +/);
       const commandName = args.shift()!.toLowerCase();
       const command = this.getCommand(commandName);
-
+      
+      if ( command == null ){
+        LOG.info(`Command não encontrado!`);
+        return;
+      }
       messageHandler.handle(command, message, args);
     });
   }
