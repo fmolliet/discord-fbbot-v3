@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.20.0",
-    "axios": "1.6.0",
+    "axios": "1.6.5",
     "cross-env": "^7.0.3",
     "discord.js": "^14.11.0",
     "dotenv": "^9.0.2",
