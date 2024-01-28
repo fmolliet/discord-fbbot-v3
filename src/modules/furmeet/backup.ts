@@ -51,7 +51,7 @@ const command: Command = {
 };
 
 function isValidType( type: string ){
-    return type === "birthday" || type === "furmeet";
+    return type === "BIRTHDAY" || type === "FURMEET";
 }
 
 
