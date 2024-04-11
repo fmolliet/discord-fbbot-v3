@@ -9,6 +9,7 @@ import {
   Partials,
   REST,
   Routes,
+  TextChannel,
 } from "discord.js";
 import { AppConfig, Command } from "./interfaces";
 
@@ -25,6 +26,8 @@ import { promisify } from "util";
 import { glob } from "glob";
 import { CONSTANTS } from "./configs/Constants";
 import InteractionHandler from "./handlers/InteractionHandler";
+import Scheduler from "./tasks/Scheduler";
+import { title } from "process";
 const globPromise = promisify(glob);
 
 export class Bot {
@@ -70,6 +73,7 @@ export class Bot {
     const ready = new ReadyHandler();
     this.client.once(Events.ClientReady, ready.handle);
     await database.connect(this.configuration.db);
+    this.scheduleMessages();
   }
 
   private handleErrors(){
@@ -81,6 +85,35 @@ export class Bot {
     this.client.on(Events.Debug, (message)=>{
       LOG.debug(message)
     });
+  }
+  
+  // Funcionalidade para proxima versao
+  private scheduleMessages(){
+    
+    const client = this.client;
+    
+    // TODO: Receber via API
+    const messages = [{
+      title: "ANUNCIO 1234",
+      content: "MENSAGEM AGENDADA 1345",
+      recurrency: '*/2 * * * *',
+      channelId: "843694264272814110"
+    }];
+    
+    messages.forEach( message => {  
+      const execution =async function(){
+        console.log(`[SCHEDULE] Executado: ${message.title}`)
+        const channel = await client.channels.fetch(message.channelId);
+        if (!channel) {
+            console.error('Canal não encontrado!');
+            return;
+        }
+        (<TextChannel> channel).send(message.content);
+      }
+    
+      Scheduler.schedule(message.recurrency, execution)
+    });
+    
   }
 
 
