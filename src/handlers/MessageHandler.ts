@@ -108,8 +108,7 @@ export default class MessageHandler {
     }
 
     if (
-      command.hasAttachment &&
-      (!message.attachments || message.attachments)
+      command.hasAttachment && !message.attachments 
     ) {
       LOG.warn(`Comando: ${command.name.toUpperCase()} não recebeu anexos.`);
       message.reply("não tem nenhum anexo nessa mensagem");

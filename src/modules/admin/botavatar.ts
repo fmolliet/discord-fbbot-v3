@@ -1,5 +1,5 @@
-import isImage from 'is-image';
 import { CommandParams, Command } from '../../interfaces';
+import isImage from '../../utils/isImage';
 
 const command : Command = {
     name: 'botavatar',
@@ -10,6 +10,7 @@ const command : Command = {
     async execute({ message, client } : CommandParams){
         
         const image = message.attachments.first()?.url;
+        
         if ( isImage(image!) ) {
             client?.user?.setAvatar(image!);
             return message.reply('imagem de perfil alterada!');

@@ -6,6 +6,7 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
+  Message,
   Partials,
   REST,
   Routes,
@@ -28,6 +29,7 @@ import { CONSTANTS } from "./configs/Constants";
 import InteractionHandler from "./handlers/InteractionHandler";
 import Scheduler from "./tasks/Scheduler";
 import { title } from "process";
+import isImage from "./utils/isImage";
 const globPromise = promisify(glob);
 
 export class Bot {
@@ -73,7 +75,7 @@ export class Bot {
     const ready = new ReadyHandler();
     this.client.once(Events.ClientReady, ready.handle);
     await database.connect(this.configuration.db);
-    this.scheduleMessages();
+    //this.scheduleMessages();
   }
 
   private handleErrors(){
@@ -151,14 +153,26 @@ export class Bot {
     const messageHandler = new MessageHandler(this.client, this.commands);
 
     this.client.on(Events.MessageCreate, async (message) => {
-      if (
-        !message.content.startsWith(CONSTANTS.prefix) ||
-        message.author.bot ||
-        message.webhookId
-      ) {
+      if (this.isFromBotOrWebhook(message)) {
         return;
       }
-
+          
+      if ( this.isBlacklistArtsChannel(message) ){
+        
+        LOG.warn(`[EVENT] mensagem deletada: ${message.content} no chat: ${message.channel} enviado pelo usuário: ${message.author.username} id: <@${message.author.id}>`);
+       
+        const reply = await message.reply(`Este canal é exclusivo para envio de artes. Comentários adicionais devem ser feitos em <#${CONSTANTS.commentaryChannel}> !`)
+        setTimeout(()=>{
+          reply.delete();
+        },15000)
+        message.delete();
+        return;
+      }
+      
+      if (!message.content.startsWith(CONSTANTS.prefix)) {
+        return;
+      }
+      
       LOG.info(`[EVENT] mensagem: ${message.content} pelo usuário: ${message.author.username} id: <@${message.author.id}>`);
 
       const args: Array<string> = message.content
@@ -173,6 +187,24 @@ export class Bot {
       }
       messageHandler.handle(command, message, args);
     });
+  }
+  
+  private isFromBotOrWebhook( message: Message): boolean {
+    return message.author.bot || message.webhookId != null;
+  }
+  
+  private isBlacklistArtsChannel( message: Message) {
+    if(!this.isArtChannel(message.channelId)) {
+      return false;
+    }
+    if ((message.attachments.size <= 0 && !message.content.includes("https://x.com")) || (message.attachments.size>0 && !isImage(message.attachments.first()?.url!))){
+      return true;
+    }
+    return false;
+  }
+  
+  private isArtChannel(channelId: string): boolean{
+    return CONSTANTS.artChannelId.indexOf(channelId)>0
   }
   
   public getCommand(commandName: string): Command {

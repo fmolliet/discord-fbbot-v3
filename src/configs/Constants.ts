@@ -8,4 +8,6 @@ export const CONSTANTS = {
   gameChannel: "837478804099694592",
   announceChannel: "201400923430322177",
   muteRoleId: "672244812128321537",
+  artChannelId: ["285609328847749120","1270167949814136884" ],
+  commentaryChannel: "364599033144279040"
 };
