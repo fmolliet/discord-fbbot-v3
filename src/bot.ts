@@ -204,7 +204,7 @@ export class Bot {
   }
   
   private isArtChannel(channelId: string): boolean{
-    return CONSTANTS.artChannelId.indexOf(channelId)>0
+    return CONSTANTS.artChannelId.indexOf(channelId)>=0;
   }
   
   public getCommand(commandName: string): Command {
