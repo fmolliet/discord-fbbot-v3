@@ -6,7 +6,6 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
-  Message,
   Partials,
   REST,
   Routes,
@@ -29,7 +28,8 @@ import { CONSTANTS } from "./configs/Constants";
 import InteractionHandler from "./handlers/InteractionHandler";
 import Scheduler from "./tasks/Scheduler";
 import { title } from "process";
-import isImage from "./utils/isImage";
+import isFromBotOrWebhook from "./utils/isFromBotOrWebHook";
+import isBlacklistArtsChannel from "./utils/isBlacklistArtsChannel";
 const globPromise = promisify(glob);
 
 export class Bot {
@@ -153,11 +153,11 @@ export class Bot {
     const messageHandler = new MessageHandler(this.client, this.commands);
 
     this.client.on(Events.MessageCreate, async (message) => {
-      if (this.isFromBotOrWebhook(message)) {
+      if (isFromBotOrWebhook(message)) {
         return;
       }
           
-      if ( this.isBlacklistArtsChannel(message) ){
+      if ( isBlacklistArtsChannel(message) ){
         
         LOG.warn(`[EVENT] mensagem deletada: ${message.content} no chat: ${message.channel} enviado pelo usuário: ${message.author.username} id: <@${message.author.id}>`);
        
@@ -187,24 +187,6 @@ export class Bot {
       }
       messageHandler.handle(command, message, args);
     });
-  }
-  
-  private isFromBotOrWebhook( message: Message): boolean {
-    return message.author.bot || message.webhookId != null;
-  }
-  
-  private isBlacklistArtsChannel( message: Message) {
-    if(!this.isArtChannel(message.channelId)) {
-      return false;
-    }
-    if ((message.attachments.size <= 0 && !message.content.includes("https://x.com")) || (message.attachments.size>0 && !isImage(message.attachments.first()?.url!))){
-      return true;
-    }
-    return false;
-  }
-  
-  private isArtChannel(channelId: string): boolean{
-    return CONSTANTS.artChannelId.indexOf(channelId)>=0;
   }
   
   public getCommand(commandName: string): Command {
