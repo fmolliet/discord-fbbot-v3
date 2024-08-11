@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import containsTwitterLink from "./ContainsTwitterUrl";
 import isArtChannel from "./isArtChannel";
 import isImage from "./isImage";
+import containsTwitterLink from "./containsTwitterUrl";
 
 export default function isBlacklistArtsChannel( message: Message) {
     if(!isArtChannel(message.channelId)) {
