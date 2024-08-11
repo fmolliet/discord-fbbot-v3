@@ -11,7 +11,7 @@ export async function removeMuteTask( client: Client) : Promise<void>{
     // Busca todas tasks para executarem
     const tasks = await taskRepository.getAllTasks();
     
-    for await ( const task of tasks! ){
+    for await ( const task of tasks ){
         
         const now = new Date(Date.now());
         const guild = client.guilds.cache.get(task!.guildId);
@@ -23,12 +23,12 @@ export async function removeMuteTask( client: Client) : Promise<void>{
                 
                 if (member && role){
                     
-                    const muteRemainTime = (task?.executeOn.getTime() || 1 ) - now.getTime();
+                    const muteRemainTime = (task?.executeOn.getTime() ?? 1 ) - now.getTime();
     
                     setTimeout( async()=> {
                         member?.roles.remove(role).catch(error =>  Logger.error(`Erro ao tentar remover a role:`, error ));
-                        Logger.info(`Deletando task...: ${task!._id}`)
                         await taskRepository?.deleteTask(task!);
+                        Logger.info(`Deletando task...: ${task!._id}`)
                     },  ( (task?.executeOn.getTime() || 1) > now.getTime() ? muteRemainTime : 1) );
                 }
             } catch ( err ){

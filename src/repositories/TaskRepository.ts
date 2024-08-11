@@ -11,7 +11,7 @@ class TaskRepository {
     }
     
     public async deleteTask( task: Task ): Promise<void> {
-        TaskModel.deleteOne(task); 
+        await TaskModel.deleteOne(task); 
     }
 }
 
