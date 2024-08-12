@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
+import { CacheType, ChatInputCommandInteraction, Message, ModalSubmitInteraction, SlashCommandBuilder } from 'discord.js';
 import { CommandParams } from './CommandParams';
 
 export interface Command {
@@ -19,5 +19,6 @@ export interface Command {
     hasSlashSupport?: boolean
     slash ?: (interaction: ChatInputCommandInteraction<CacheType>) => Promise<void>
     data?: SlashCommandBuilder
-    execute( param : CommandParams): Promise<Message|Message[]|void>
+    execute:( param : CommandParams)=> Promise<Message|Message[]|void>
+    handleModalSubmit?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<void>
 }

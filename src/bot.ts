@@ -27,7 +27,6 @@ import { glob } from "glob";
 import { CONSTANTS } from "./configs/Constants";
 import InteractionHandler from "./handlers/InteractionHandler";
 import Scheduler from "./tasks/Scheduler";
-import { title } from "process";
 import isFromBotOrWebhook from "./utils/isFromBotOrWebHook";
 import isBlacklistArtsChannel from "./utils/isBlacklistArtsChannel";
 const globPromise = promisify(glob);
@@ -38,6 +37,8 @@ export class Bot {
   private commands: Collection<string, Command> = new Collection();
 
   private configuration: AppConfig;
+  
+  private scheduler: Scheduler;
 
   constructor(config: AppConfig) {
     this.client = new Client({
@@ -58,7 +59,7 @@ export class Bot {
         Partials.Reaction,
       ],
     });
-
+    this.scheduler = new Scheduler(this.client);
     this.configuration = config;
 
     this.setup()
@@ -75,7 +76,7 @@ export class Bot {
     const ready = new ReadyHandler();
     this.client.once(Events.ClientReady, ready.handle);
     await database.connect(this.configuration.db);
-    //this.scheduleMessages();
+    await this.scheduleAnnounces();
   }
 
   private handleErrors(){
@@ -89,33 +90,9 @@ export class Bot {
     });
   }
   
-  // Funcionalidade para proxima versao
-  private scheduleMessages(){
+  private async scheduleAnnounces(){
     
-    const client = this.client;
-    
-    // TODO: Receber via API
-    const messages = [{
-      title: "ANUNCIO 1234",
-      content: "MENSAGEM AGENDADA 1345",
-      recurrency: '*/2 * * * *',
-      channelId: "843694264272814110"
-    }];
-    
-    messages.forEach( message => {  
-      const execution =async function(){
-        console.log(`[SCHEDULE] Executado: ${message.title}`)
-        const channel = await client.channels.fetch(message.channelId);
-        if (!channel) {
-            console.error('Canal não encontrado!');
-            return;
-        }
-        (<TextChannel> channel).send(message.content);
-      }
-    
-      Scheduler.schedule(message.recurrency, execution)
-    });
-    
+    await this.scheduler.init();
   }
 
 
@@ -130,10 +107,14 @@ export class Bot {
   }
   
   private async handleModalInteraction(){
-    // TODO: Implementar
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isModalSubmit()) return;
-      LOG.info(`[EVENT] Submit: ${interaction.id} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
+      LOG.info(`[EVENT] Modal Submit: ${interaction.id} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
+      const comand = this.commands.get(interaction.customId);
+      if (comand) {
+        await comand.handleModalSubmit!(interaction)
+      }
+      
     });
   }
   
@@ -245,6 +226,7 @@ export class Bot {
     await this.loadCommands();
     await this.registerCommands();
     await this.handleInteration();
+    await this.handleModalInteraction();
     await this.handleMessage();
     await removeMuteTask(this.client);
   }

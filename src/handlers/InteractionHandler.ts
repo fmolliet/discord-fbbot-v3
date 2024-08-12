@@ -15,6 +15,21 @@ export default class InteractionHandler {
             return;
         }
         
+        if (
+            command.adminOnly &&
+            !(await interaction.guild?.members.fetch(interaction.member!.user.id))?.permissions.has(
+              "Administrator"
+            ) &&
+            !(await interaction.guild?.members.fetch(interaction.member!.user.id))?.permissions.has(
+              "KickMembers"
+            )
+          ) {
+            LOG.warn(`Comando: ${command.name.toUpperCase()} somente para adminstradores.`);
+            interaction.reply("Somente administradores podem utilizar esse comando!");
+            return;
+          }
+      
+        
         LOG.info("Comando a se executado: " + command.name.toUpperCase());
         command.slash!(interaction);
         const endTime = performance.now();
