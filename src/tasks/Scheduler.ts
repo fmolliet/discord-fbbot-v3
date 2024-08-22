@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { Logger } from '../helpers';
-import { Client } from "discord.js";
+import { Client, StickerType } from "discord.js";
 import { EmbedBuilder } from '@discordjs/builders';
 import service from "../services/AnnounceService";
 import birthdayServices from "../services/BirthdayService";
@@ -42,8 +42,9 @@ export default class Scheduler {
             })
         })
         
-        cron.schedule("0 */8 * * *", async()=>{
-        
+        // TODO: Refatorar
+        //cron.schedule("0 */8 * * *", async()=>{
+            setTimeout(async()=>{
             const now = new Date();
             Logger.info(`[SCHEDULE] Configurando job de aniversário!`)
             const channel = await client.channels.fetch(process.env.BIRTHDAY_CHANNEL_ID ?? "1276005497392074845");
@@ -62,16 +63,18 @@ export default class Scheduler {
                     await channel.send(`:cake: Feliz Aniversário para galera do dia ${this.pad(now.getDate(), 2)}/${this.pad(now.getMonth() + 1, 2)}`)
                     await channel.send(`Aniversariantes de hoje: \n${aniversarios.join("\n")}`);
                     await channel.send(":tada: :birthday: :tada:")
-                } else {
+                    
+                    await channel.send({stickers: [process.env.BIRTHDAY_STICKER_ID??"1229592033384202241"]})
+                } else { 
                     Logger.info(`[SCHEDULE] Ninguem fez aniversário hoje!`)
                 }
                 
             }
-
-        }, {
-            scheduled:true,
-            timezone: "America/Sao_Paulo"
-        })
+    }, 1500)
+        // }, {
+        //     scheduled:true,
+        //     timezone: "America/Sao_Paulo"
+        // })
     
     }
     

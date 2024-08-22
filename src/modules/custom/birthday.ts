@@ -34,8 +34,8 @@ const command: Command = {
     // Busca e se encontrar tenta atualizar
     try {
       const birthday = await birthdayServices.getBirthDaysById(message.author.id);
-      
-      if (birthday.data != null ) {
+      Logger.info(birthday);
+      if (birthday != null) {
         Logger.info("Encontrado, atualizando...");
         await birthdayServices.updateBirthDay( data);
         return message.reply("Aniversário atualizado com sucesso.");

@@ -17,8 +17,9 @@ class BirthdayService {
         return data || [];
     }
     
-    async getBirthDaysById(id: string): Promise<AxiosResponse<BirthDay>>{
-        return await api.get(`/birthday/${id}`);
+    async getBirthDaysById(id: string): Promise<BirthDay>{
+        const { data } =  await api.get(`/birthday/${id}`);
+        return data || null
     }
     
     async getBirthDaysFromToday(): Promise<BirthDay[]>{
