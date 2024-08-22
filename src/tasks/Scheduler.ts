@@ -44,7 +44,6 @@ export default class Scheduler {
         
         cron.schedule("0 */8 * * *", async()=>{
         
-              
             const now = new Date();
             Logger.info(`[SCHEDULE] Configurando job de aniversário!`)
             const channel = await client.channels.fetch(process.env.BIRTHDAY_CHANNEL_ID ?? "1276005497392074845");
@@ -65,7 +64,6 @@ export default class Scheduler {
                     await channel.send(":tada: :birthday: :tada:")
                 } else {
                     Logger.info(`[SCHEDULE] Ninguem fez aniversário hoje!`)
-                    //await channel.send(announce.message);
                 }
                 
             }
