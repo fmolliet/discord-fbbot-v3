@@ -17,9 +17,7 @@ const command: Command = {
     Logger.info("Buscando aniversarios do dia para: " + message.author.username);
     // Busca e se encontrar tenta atualizar
     try {
-      const birthdays:AxiosResponse<BirthDay[]> = await birthdayServices.get(
-        `/birthday/month`
-      );
+      const birthdays:AxiosResponse<BirthDay[]> = await birthdayServices.getBirthDaysFromMonth();
       
       const date = new Date();
       

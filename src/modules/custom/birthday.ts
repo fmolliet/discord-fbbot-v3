@@ -33,13 +33,11 @@ const command: Command = {
     Logger.info("Aniversário recebido: " + aniversario + " - Usuario: "+data.name + " " + data.snowflake);
     // Busca e se encontrar tenta atualizar
     try {
-      const birthday = await birthdayServices.get(
-        `/birthday/${message.author.id}`
-      );
+      const birthday = await birthdayServices.getBirthDaysById(message.author.id);
       
-      if (birthday.data != null && birthday.data != "") {
+      if (birthday.data != null ) {
         Logger.info("Encontrado, atualizando...");
-        await birthdayServices.patch("/birthday", data);
+        await birthdayServices.updateBirthDay( data);
         return message.reply("Aniversário atualizado com sucesso.");
       }
     } catch (err: unknown | AxiosError) {
@@ -48,7 +46,7 @@ const command: Command = {
     }
     // Cadastra aniversário
     try {
-      await birthdayServices.post("/birthday", data);
+      await birthdayServices.createBirthday(data);
     } catch (err: unknown | AxiosError) {
       Logger.warn("Erro ao cadastrar aniversário", err);
       return handleException(message, err);

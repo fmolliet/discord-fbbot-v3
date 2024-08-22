@@ -1,7 +1,9 @@
 import cron from "node-cron";
 import { Logger } from '../helpers';
 import { Client } from "discord.js";
+import { EmbedBuilder } from '@discordjs/builders';
 import service from "../services/AnnounceService";
+import birthdayServices from "../services/BirthdayService";
 import calculateNextPostTime from "../utils/calculateNextPostTime";
 
 export default class Scheduler {
@@ -14,7 +16,7 @@ export default class Scheduler {
     }
     
     async init(){
-        Logger.info(`[SCHEDULE] Inicializando scheduler`)
+        Logger.info(`[SCHEDULE] Inicializando scheduler!`)
         const client = this.client;
         
         cron.schedule("*/15 * * * *", async()=>{
@@ -39,8 +41,48 @@ export default class Scheduler {
 
             })
         })
+        
+        cron.schedule("0 */8 * * *", async()=>{
+        
+              
+            const now = new Date();
+            Logger.info(`[SCHEDULE] Configurando job de aniversário!`)
+            const channel = await client.channels.fetch(process.env.BIRTHDAY_CHANNEL_ID ?? "1276005497392074845");
+
+            if (channel?.isTextBased()){
+                const birthdays = await birthdayServices.getBirthDaysFromToday();        
+
+                if ( birthdays.length > 0){
+                    
+                    const aniversarios: string[] = [];
+        
+                    birthdays.forEach(birthday => {
+                        aniversarios.push(`<@${birthday.snowflake}>`);
+                    });
+                    
+                    await channel.send(`:cake: Feliz Aniversário para galera do dia ${this.pad(now.getDate(), 2)}/${this.pad(now.getMonth() + 1, 2)}`)
+                    await channel.send(`Aniversariantes de hoje: \n${aniversarios.join("\n")}`);
+                    await channel.send(":tada: :birthday: :tada:")
+                } else {
+                    Logger.info(`[SCHEDULE] Ninguem fez aniversário hoje!`)
+                    //await channel.send(announce.message);
+                }
+                
+            }
+
+        }, {
+            scheduled:true,
+            timezone: "America/Sao_Paulo"
+        })
     
     }
-
+    
+    private pad(num = 0, desiredLength = 2) {
+        let paddedNumber = String(num);
+        while (paddedNumber.length < desiredLength) {
+          paddedNumber = `0${paddedNumber}`;
+        }
+        return paddedNumber;
+    }
     
 }
