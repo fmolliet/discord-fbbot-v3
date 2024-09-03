@@ -30,6 +30,7 @@ const command : Command = {
             } else {
                 (<TextChannel> channel).send(message.content.replace(anuncio, ''));
             }
+            /** 
             try {
                 await twitterService.tweet(anuncio);
                 return message.reply("Postado no chat de anuncio no twitter com sucesso.");
@@ -40,7 +41,7 @@ const command : Command = {
                 });
                 Logger.error( `[${error.response.data.title}] ${error.response.data.detail}`)
                 return message.reply(`Olha, consegui postar no chat de anuncio, mas deu erro ao chamar o twitter.\nErro detalhado:${error.response.data.detail}`);
-            }
+            }*/
             
         }
         return message.reply("Esse canal não é de texto")

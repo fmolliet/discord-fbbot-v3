@@ -43,8 +43,8 @@ export default class Scheduler {
         })
         
         // TODO: Refatorar
-        //cron.schedule("0 */8 * * *", async()=>{
-            setTimeout(async()=>{
+        cron.schedule("0 8 * * *", async()=>{
+            //setTimeout(async()=>{
             const now = new Date();
             Logger.info(`[SCHEDULE] Configurando job de aniversário!`)
             const channel = await client.channels.fetch(process.env.BIRTHDAY_CHANNEL_ID ?? "1276005497392074845");
@@ -63,18 +63,18 @@ export default class Scheduler {
                     await channel.send(`:cake: Feliz Aniversário para galera do dia ${this.pad(now.getDate(), 2)}/${this.pad(now.getMonth() + 1, 2)}`)
                     await channel.send(`Aniversariantes de hoje: \n${aniversarios.join("\n")}`);
                     await channel.send(":tada: :birthday: :tada:")
-                    
+                    await channel.send(":exclamation: Caso queira cadastrar seu aniversário, use o comando `!bd` `<dia>/<mês>` !")
                     await channel.send({stickers: [process.env.BIRTHDAY_STICKER_ID??"1229592033384202241"]})
                 } else { 
                     Logger.info(`[SCHEDULE] Ninguem fez aniversário hoje!`)
                 }
                 
             }
-    }, 1500)
-        // }, {
-        //     scheduled:true,
-        //     timezone: "America/Sao_Paulo"
-        // })
+        //}, 1500)
+        }, {
+            scheduled:true,
+            timezone: "America/Sao_Paulo"
+        });
     
     }
     

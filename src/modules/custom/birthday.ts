@@ -71,7 +71,7 @@ function handleException(message: Message, err: unknown | AxiosError) {
       );
     }
     return message.channel.send(
-      "Ocorreu algum erro imprevisto, por favor, o Winter."
+      "Ocorreu algum erro imprevisto, por favor, chamar o <@231440789350121472>."
     );
   } else {
     console.error(err);

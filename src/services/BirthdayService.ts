@@ -9,8 +9,6 @@ const api = axios.create({
     }
 });
 
-
-
 class BirthdayService {
     async getBirtyhday(): Promise<Array<Announce>>{
         const { data } = await api.get("/anuncios");
