@@ -2,11 +2,12 @@
 import axios, { AxiosError } from 'axios';
 import { Message, MessagePayload, AttachmentBuilder } from 'discord.js';
 import { Logger } from '../../helpers';
-import createReport from '../../helpers/reporter';
-import { Command, CommandParams, CreatedReporter } from '../../interfaces';
+import { createBirthDayReport, createMeetReport } from '../../helpers/reporter';
+import { BirthDay, Command, CommandParams, CreatedReporter } from '../../interfaces';
 
 import cacheRepository from '../../repositories/CacheRepository';
 import meetingService from "../../services/MeetingService";
+import BirthdayService from '../../services/BirthdayService';
 
 const command: Command = {
     name: 'backup',
@@ -23,27 +24,47 @@ const command: Command = {
             return message.reply(`Tipo inválido: '${args![0]}', escolha entre birthday e furmeet!`);
         }
 
-        const report : CreatedReporter  = await createReport();
-
-        const furs = await meetingService.getActiveFurs();
-        
-        if (furs.length === 0) {
-            return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
-        }
+        let report : CreatedReporter;
 
         message.channel.send('Montando backup...');
-        await fillReport(message, report, furs);
+        if (type === "BIRTHDAY") {
+            report= await createBirthDayReport();
+
+            const birthdays = await BirthdayService.getBirthdays();
+            
+            if (birthdays.length === 0) {
+                return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
+            }
+
+            await fillBirthdayReport(message, report, birthdays);
+        } else {
+            report= await createMeetReport();
+
+            const furs = await meetingService.getActiveFurs();
+            
+            if (furs.length === 0) {
+                return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
+            }
+
+            
+            await fillReport(message, report, furs);
+            
+
+            
+        }
+            
         message.reply('Estarei enviando em seu privado o arquivo de backup!');
-        
         report.workbook.commit().then(function() {
-            Logger.info('Backup executado com sucesso!');
+                Logger.info('Backup executado com sucesso!');
         });
+        
+        
             
         return (await message.author.createDM()).send(
             new MessagePayload(
                 await message.author.createDM(), { 
-                    content: 'Segue backup de Furmeet, abraços.',
-                    files: [new AttachmentBuilder(report.filename, { name: 'report.xlsx'})]
+                    content: `Segue backup do ${type}, abraços.`,
+                    files: [new AttachmentBuilder(report.filename, { name: `report-${ type }-${new Date().toISOString()}.xlsx` })]
                 }
             )
         );
@@ -54,6 +75,28 @@ function isValidType( type: string ){
     return type === "BIRTHDAY" || type === "FURMEET";
 }
 
+async function fillBirthdayReport(message: Message, report: CreatedReporter, birthdays: any[]) {
+    const promises = birthdays.map(async (birthday: BirthDay) => {
+        try {
+    
+            report.worksheet.addRow({day: birthday.day, month: birthday.month, name: birthday.name, userId: birthday.snowflake }).commit()
+        
+        } catch (err){
+            Logger.warn(`Não localizado nesse server: ${birthday.snowflake}`);
+            try {
+                if (process.env.ENVIRONMENT == "prod"){
+                    Logger.warn("Deactivating fur snowflake from db.")
+                    //await meetingService.deactive(birthday.id);
+                }
+            } catch ( ex: unknown | AxiosError){
+                if (axios.isAxiosError(ex)){
+                    Logger.error(`Erro ao tentar desativar: ${ex.message}`)
+                }
+            }
+        }
+    });
+    await Promise.all(promises);
+}
 
 async function fillReport(message: Message, report: CreatedReporter, furs: any[]) {
     const promises = furs.map(async (fur: any) => {

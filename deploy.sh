@@ -13,7 +13,13 @@ fi
 echo "Versão do projeto: $VERSION"
 
 # Build container
-docker build . -t furry-brasil-bot:latest
+# quando a arquitetura for ARM, adicionar --platform linux/amd64
+if [ "$(uname -m)" = "arm64" ]; then
+  docker build --platform linux/amd64 -t furry-brasil-bot .
+else
+  docker build -t furry-brasil-bot .
+fi
+
 # Tag
 docker tag furry-brasil-bot:latest winty.io:5000/winty/furry-brasil-bot:$VERSION
 

@@ -1,0 +1,24 @@
+meta {
+  name: Get Birthdays
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{birthday.baseUrl}}/birthday?size=2000
+  body: none
+  auth: basic
+}
+
+params:query {
+  size: 2000
+}
+
+auth:basic {
+  username: {{birthday.username}}
+  password: {{birthday.secret}}
+}
+
+settings {
+  encodeUrl: true
+}
