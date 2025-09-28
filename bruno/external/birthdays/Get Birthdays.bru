@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{birthday.baseUrl}}/birthday?size=2000
+  url: {{birthday.baseUrl}}/birthday?size=2000&page=0
   body: none
   auth: basic
 }
 
 params:query {
   size: 2000
+  page: 0
 }
 
 auth:basic {
