@@ -34,7 +34,17 @@ const command : Command = {
 
         if (founded.length >= 1) {
             message.channel.send('Localizei uma galera! Aqui a lista com os nomes:');
-            return message.channel.send(`\`\`\`${founded.join('\n')}\`\`\``);
+            for ( let i = 0; i < founded.length; i += 64 ) {
+
+                let max = i+64;
+                if ( i+64 > founded.length){
+                    max = founded.length
+                }
+                const group = founded.slice(i, max)
+                message.channel.send(`\`\`\`${group.join('\n')}\`\`\``);
+            }
+            return;
+
         }
      
     }
