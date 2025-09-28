@@ -17,17 +17,17 @@ const command: Command = {
     Logger.info("Buscando aniversarios do dia para: " + message.author.username);
     // Busca e se encontrar tenta atualizar
     try {
-      const birthdays:AxiosResponse<BirthDay[]> = await birthdayServices.getBirthDaysFromMonth();
+      const birthdays:BirthDay[] = await birthdayServices.getBirthDaysFromMonth();
       
       const date = new Date();
       
-      if (birthdays.data != null && birthdays.data.length != 0) {
+      if (birthdays != null && birthdays.length != 0) {
         Logger.info("Encontrado, montando lista de aniversariantes.");
         message.reply(`Localizei os aniversariantes do mês de ${ date.toLocaleString("pt-BR", { month: "long" })} ${message.author.username}, aguarda um momento que vou mandar a lista aqui.` );
         
         const aniversarios: Array<string[]> = [];
         
-        birthdays.data.forEach(birthday => {
+        birthdays.forEach(birthday => {
           const { day, name, snowflake } = birthday;
           if (!aniversarios[day]) {
             aniversarios[day] = [];

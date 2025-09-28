@@ -25,7 +25,7 @@ class BirthdayService {
         return data || [];
     }
     
-    async getBirthDaysFromMonth(): Promise<AxiosResponse<BirthDay[]>>{
+    async getBirthDaysFromMonth(): Promise<BirthDay[]>{
         const { data } = await api.get(`/birthday/month`);
         return data || [];
     }
