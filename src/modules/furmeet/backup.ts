@@ -18,39 +18,30 @@ const command: Command = {
     adminOnly: true,
     cooldown: 120,
     async execute({ message , args }: CommandParams) : Promise<Message[]|Message>  {
-        const type = args![0]?.toUpperCase();
+        if (!args || args.length === 0) {
+            return message.reply("Você deve especificar o tipo de backup: 'birthday' ou 'furmeet'.");
+        }
+        const type = args[0]?.toUpperCase();
     
         if (!isValidType(type)) {
             return message.reply(`Tipo inválido: '${args![0]}', escolha entre birthday e furmeet!`);
         }
-
+        await message.channel.send('Montando backup...');
         let report : CreatedReporter;
-
-        message.channel.send('Montando backup...');
         if (type === "BIRTHDAY") {
             report= await createBirthDayReport();
-
             const birthdays = await BirthdayService.getBirthdays();
-            
             if (birthdays.length === 0) {
-                return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
+                return message.reply('Infelizmente, não achei ninguem cadastrado para gerar o backup!');  
             }
-
             await fillBirthdayReport(message, report, birthdays);
         } else {
             report= await createMeetReport();
-
             const furs = await meetingService.getActiveFurs();
-            
             if (furs.length === 0) {
-                return message.reply('Infelizmente, não achei ninguem nesse estado para avisar do me-p[et!');  
+                return message.reply('Infelizmente, não achei ninguem cadastrado para gerar o backup!');  
             }
-
-            
             await fillReport(message, report, furs);
-            
-
-            
         }
             
         message.reply('Estarei enviando em seu privado o arquivo de backup!');

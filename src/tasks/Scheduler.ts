@@ -44,7 +44,6 @@ export default class Scheduler {
 
         // TODO: Refatorar
         cron.schedule("0 8 * * *", async () => {
-            //setTimeout(async()=>{
             const now = new Date();
             Logger.info(`[SCHEDULE] Configurando job de aniversário!`)
             const channel = await client.channels.fetch(process.env.BIRTHDAY_CHANNEL_ID ?? "1276005497392074845");
@@ -67,14 +66,12 @@ export default class Scheduler {
                 }
 
             }
-            //}, 1500)
         }, {
             scheduled: true,
             timezone: "America/Sao_Paulo"
         });
 
-        cron.schedule("0 8 1 * *", async () => {
-            //setTimeout(async()=>{
+        cron.schedule("0 8 2 * *", async () => {
             const now = new Date();
             Logger.info(`[SCHEDULE] Configurando job de aniversário de staff!`)
 
@@ -103,35 +100,24 @@ export default class Scheduler {
                     try { 
                         // Verificar se o usuário está n guild 
                         const guildId = process.env.ENVIRONMENT == "prod"? "201135803655520257": "839862362873659392";
-                        const guild = await client.guilds.fetch({ guild: guildId })
-                        // Busca os grupos daquele cara se for staff poe em na lista de aniversariantes
+                        const guild = await client.guilds.fetch({ guild: guildId });
                         const guildMember = await guild.members.fetch(birthday.snowflake);
 
-                        // vai localizar admins e moderadores
-                        if (guildMember.permissions.has("KickMembers", true)) {
-                            aniversarios.push(`<@${birthday.snowflake}>`);
-                        }
-
-                        if (guildMember.roles.cache.some(role => CONSTANTS.collabRoleId.includes(role.id))) {
-                            aniversarios.push(`<@${birthday.snowflake}>`);
+                        // vai localizar admins e moderadores ou colaboradores
+                        if (guildMember.permissions.has("KickMembers", true) || guildMember.roles.cache.some(role => CONSTANTS.collabRoleId.includes(role.id))) {
+                            aniversarios.push(`<@${birthday.snowflake}> - ${this.pad(birthday.day)}/${this.pad(birthday.month)}`);
                         }
                     } catch (error) {
                         Logger.error(`[SCHEDULE] Erro ao buscar guild member: ${birthday.snowflake}`, error);
                     }
-                    
-
                 }
-                // Manda nos canais da staff ... 
-                // deverá deixar o mes em portugues
-                await this.sendMessageBirthDayMessageIn(channelList, `:cake: Feliz Aniversário para galera do mês ${now.toLocaleString('pt-BR', { month: 'long' })}`, aniversarios)
+                await this.sendMessageBirthDayMessageIn(channelList, `:cake: Segue os aniversáriantes dos staffs do mês de ${now.toLocaleString('pt-BR', { month: 'long' })}`, aniversarios)
 
 
             } else {
-                Logger.info(`[SCHEDULE] Ninguem fez aniversário hoje!`)
+                Logger.info(`[SCHEDULE] Nenhum staff fez aniversário no mês!`)
             }
 
-
-            //}, 1000)
         }, {
             scheduled: true,
             timezone: "America/Sao_Paulo",
@@ -151,10 +137,11 @@ export default class Scheduler {
         for await (const channel of channelList) {
             if (channel?.isTextBased()) {
                 await channel.send(message)
-                await channel.send(`Aniversariantes: \n${aniversarios.join("\n")}`);
+                await channel.send(`Aniversariantes são: \n${aniversarios.join("\n")}`);
                 await channel.send(":tada: :birthday: :tada:")
                 await channel.send(":exclamation: Caso queira cadastrar seu aniversário, use o comando `!bd` `<dia>/<mês>` !")
                 await channel.send({ stickers: [process.env.BIRTHDAY_STICKER_ID ?? "1229592033384202241"] })
+                await channel.send("Atenciosamente, Furry Brasil 2.0.")
             }
         }
 
