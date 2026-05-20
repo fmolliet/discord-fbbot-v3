@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Command, CommandParams } from '../../interfaces';
+import { Command, CommandParams, Fur } from '../../interfaces';
 import { Logger } from '../../helpers';
 import cacheRepository from '../../repositories/CacheRepository';
 import isValidState from '../../utils/validateState';
-
 import meetingService from "../../services/MeetingService";
 import { Message } from 'discord.js';
 import axios, { AxiosError } from 'axios';
@@ -18,10 +17,10 @@ const command : Command = {
     cooldown: 5,
     hasArgs: true,
     async execute( { message, args } : CommandParams) {
-        const state = args![0]?.toUpperCase();
+        const state = args[0]?.toUpperCase();
 
-        if (!isValidState(state)) {
-            return message.reply(`Estado inválido: '${args![0]}'!`);
+        if (!state || !isValidState(state)) {
+            return message.reply(`Estado inválido: '${args[0]}'!`);
         }
 
         const furs = await meetingService.getFursByState(state);
@@ -44,15 +43,13 @@ const command : Command = {
                 message.channel.send(`\`\`\`${group.join('\n')}\`\`\``);
             }
             return;
-
         }
-     
     }
 };
 
-async function getFurNames(message: Message, furs: any[]) {
+async function getFurNames(message: Message, furs: Fur[]) {
     const founded: string[] = [];
-    const promises = furs.map(async (fur: any) => {
+    const promises = furs.map(async (fur: Fur) => {
         try {
             const furName = fur.name || fur.name!="" ? fur.name : await cacheRepository.getNameOfSnowflake(message, fur.snowflake);
             if (furName) {
@@ -76,6 +73,5 @@ async function getFurNames(message: Message, furs: any[]) {
     await Promise.all(promises);
     return founded;
 }
-
 
 export = command;

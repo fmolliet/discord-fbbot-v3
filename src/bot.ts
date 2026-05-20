@@ -24,11 +24,11 @@ import ReadyHandler from "./handlers/ReadyHandler";
 
 import { promisify } from "util";
 import { glob } from "glob";
-import { CONSTANTS } from "./configs/Constants";
+import { CONSTANTS } from "./configs/constants";
 import InteractionHandler from "./handlers/InteractionHandler";
 import Scheduler from "./tasks/Scheduler";
 import isFromBotOrWebhook from "./utils/isFromBotOrWebHook";
-import isBlacklistArtsChannel from "./utils/isBlacklistArtsChannel";
+import ArtsChannelHandler from "./handlers/special/ArtsChannelHandler";
 const globPromise = promisify(glob);
 
 export class Bot {
@@ -96,7 +96,7 @@ export class Bot {
   }
 
 
-  private async handleInteration(){
+  private async handleInteraction(){
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
       LOG.info(`[EVENT] interação: ${interaction.commandName} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
@@ -111,25 +111,18 @@ export class Bot {
       if (!interaction.isModalSubmit()) return;
       LOG.info(`[EVENT] Modal Submit: ${interaction.id} pelo usuário: ${interaction.user.username} id: <@${interaction.user.id}>`);
       const comand = this.commands.get(interaction.customId);
-      if (comand) {
-        await comand.handleModalSubmit!(interaction)
+      if (comand && comand.handleModalSubmit) {
+        await comand.handleModalSubmit(interaction)
       }
-      
     });
-  }
-  
-  private async registerBastion(){
-    //TODO: Implementar Bastion, o monitor da sala de entrada
-      
   }
   
   private async handleJoinGuild(){
     this.client.on(Events.GuildMemberAdd, (member)=>{
-      //TODO: Implementar mensagem ao entrar
-      //member.send("mensagem de boas vindas!");
+      // Implementação futura de boas vindas
     })
   }
-
+  
   private async handleMessage(): Promise<void> {
     const messageHandler = new MessageHandler(this.client, this.commands);
 
@@ -137,16 +130,9 @@ export class Bot {
       if (isFromBotOrWebhook(message)) {
         return;
       }
-          
-      if ( isBlacklistArtsChannel(message) ){
-        
-        LOG.warn(`[EVENT] mensagem deletada: ${message.content} no chat: ${message.channel} enviado pelo usuário: ${message.author.username} id: <@${message.author.id}>`);
-       
-        const reply = await message.reply(`Este canal é exclusivo para envio de artes. Comentários adicionais devem ser feitos em <#${CONSTANTS.commentaryChannel}> !`)
-        setTimeout(()=>{
-          reply.delete();
-        },15000)
-        message.delete();
+           
+      const artsHandler = new ArtsChannelHandler();
+      if (await artsHandler.handle(message)) {
         return;
       }
       
@@ -159,8 +145,9 @@ export class Bot {
       const args: Array<string> = message.content
         .slice(CONSTANTS.prefix.length)
         .split(/ +/);
-      const commandName = args.shift()!.toLowerCase();
-      const command = this.getCommand(commandName);
+       const commandName = args.shift()?.toLowerCase();
+       if (!commandName) return;
+       const command = this.getCommand(commandName);
       
       if ( command == null ){
         LOG.info(`Command não encontrado!`);
@@ -176,9 +163,9 @@ export class Bot {
       return command;
     }
     // Realizei um assert non-Null  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
-    return this.commands.find(
-      (cmd) => cmd.aliases! && cmd.aliases.includes(commandName)
-    ) as Command;
+     return this.commands.find(
+       (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
+     ) as Command;
   }
 
   private async loadCommands() {
@@ -199,7 +186,7 @@ export class Bot {
   }
   
   private async registerCommands() {
-    const rest = new REST().setToken(this.configuration.token!);
+     const rest = new REST().setToken(this.configuration.token ?? "");
 
     const supportedCommands = this.commands.filter(
       (command) => command.hasSlashSupport
@@ -208,10 +195,10 @@ export class Bot {
     LOG.info(
       `[REST] Iniciando atualização de ${supportedCommands.size} comandos (/) de aplicação.`
     );
-    const data = (await rest.put(
-      Routes.applicationCommands(this.configuration.botId!),
-      { body: supportedCommands }
-    )) as Array<Object>;
+     const data = (await rest.put(
+       Routes.applicationCommands(this.configuration.botId ?? ""),
+       { body: supportedCommands }
+     )) as Array<Object>;
 
     LOG.info(
       `[REST] Recarregado com sucessos ${data.length} comandos (/) de aplicação.`
@@ -225,7 +212,7 @@ export class Bot {
     await this.handleReady();
     await this.loadCommands();
     await this.registerCommands();
-    await this.handleInteration();
+     await this.handleInteraction();
     await this.handleModalInteraction();
     await this.handleMessage();
     await removeMuteTask(this.client);

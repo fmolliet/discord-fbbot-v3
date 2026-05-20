@@ -1,20 +1,79 @@
 import { ChannelType, Client, Collection, Message } from "discord.js";
 import { Logger as LOG } from "../helpers";
-import { CONSTANTS } from "../configs/Constants";
+import { CONSTANTS } from "../configs/constants";
 import { Command } from "../interfaces";
-
 import InfluxService from "../services/InfluxService";
+import CommandGuard from "./guards/CommandGuard";
+import CooldownManager from "./CooldownManager";
 
 export default class MessageHandler {
-  
-  private cooldowns = new Collection();
+  private cooldownManager = new CooldownManager();
   private client: Client;
   private commands: Collection<string, Command>;
+  private guard = new CommandGuard();
 
   constructor(client: Client, commands: Collection<string, Command>) {
     this.client = client;
     this.commands = commands;
   }
+
+  public async handle(command: Command, message: Message, args: Array<string>) {
+    const startTime = performance.now();
+    
+    const guardResult = await this.guard.canExecute(command, message, args);
+    if (!guardResult.allowed) {
+      if (command.guildOnly || command.privateOnly) {
+        setTimeout(() => message.delete().catch(() => {}), 1000);
+      }
+      LOG.warn(`Comando: ${command.name.toUpperCase()} bloqueado por guard.`);
+      return message.reply(guardResult.reason || "Execução negada.");
+    }
+
+    if (command.hasMention && command.guildOnly) {
+      const mention = args[0];
+      const userID = mention.replace(/<@!|>|<| /g, "");
+      try {
+        const member = await message.guild?.members.fetch(userID);
+        if (!member) {
+          LOG.warn(`Comando: ${command.name.toUpperCase()} membro não encontrado: ${userID}.`);
+          return message.reply(`Membro não encontrado no servidor com id: \`${userID}\``);
+        }
+      } catch (ex) {
+        LOG.warn(`Comando: ${command.name.toUpperCase()} usuário inválido: ${mention}.`);
+        return message.reply(`Membro inválido: \`${mention}\`, digite novamente!`);
+      }
+    }
+
+    if (command.hasAttachment && message.attachments.size === 0) {
+      LOG.warn(`Comando: ${command.name.toUpperCase()} sem anexos.`);
+      return message.reply("não tem nenhum anexo nessa mensagem");
+    }
+
+    const cooldownSecs = command.cooldown ?? 3;
+    const cooldownResult = await this.cooldownManager.checkCooldown(command.name, message.author.id, cooldownSecs);
+    if (!cooldownResult.allowed) {
+      return message.reply(`por favor espere ${cooldownResult.timeLeft?.toFixed(1)} segundo(s) antes de usar o comando: \`${command.name}\``);
+    }
+
+    try {
+      LOG.info("Comando a se executado: " + command.name.toUpperCase());
+      InfluxService.write("command", command.name);
+      InfluxService.write("execution", "uses");
+      await command.execute({
+        message,
+        args,
+        client: this.client,
+        commands: this.commands
+      });
+    } catch (error) {
+      LOG.error(error);
+      InfluxService.write("execution", "error");
+      message.reply("Ocorreu um erro na execução do comando, entre em contato com o dev!");
+    }
+    const endTime = performance.now();
+    LOG.debug(`Execution time: ${(endTime - startTime).toFixed(3)} ms`);
+  }
+}
 
   public async handle(command: Command, message: Message, args: Array<string>) {
     const startTime = performance.now();
